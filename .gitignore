@@ -125,7 +125,7 @@ _modules/*
 /results/
 /phpunit.xml
 
-# Configuración local y credenciales
+# Configuraciï¿½n local y credenciales
 .env
 .env.*
 !.env.example
@@ -145,3 +145,11 @@ _modules/*
 *.log
 *.bak
 *.tmp
+
+# Permitir Bootstrap local dentro de public/assets/vendor
+!public/assets/vendor/
+!public/assets/vendor/bootstrap/
+!public/assets/vendor/bootstrap/css/
+!public/assets/vendor/bootstrap/css/bootstrap.min.css
+!public/assets/vendor/bootstrap/js/
+!public/assets/vendor/bootstrap/js/bootstrap.bundle.min.js
