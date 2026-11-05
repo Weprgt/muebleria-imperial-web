@@ -153,3 +153,5 @@ _modules/*
 !public/assets/vendor/bootstrap/css/bootstrap.min.css
 !public/assets/vendor/bootstrap/js/
 !public/assets/vendor/bootstrap/js/bootstrap.bundle.min.js
+
+/writable/locks/*.lock
