@@ -38,3 +38,12 @@ $routes->get('taller', 'PanelRolController::taller', [
 $routes->get('cliente', 'PanelRolController::cliente', [
     'filter' => 'role:4'
 ]);
+
+$routes->get('admin/muebles', 'AdminMueblesController::index', [
+    'filter' => 'role:1']
+);
+$routes->get('admin/muebles/agregar', 'AdminMueblesController::agregar', [
+    'filter' => 'role:1']);
+
+$routes->post('admin/muebles/guardar', 'AdminMueblesController::guardar', [
+    'filter' => 'role:1']);

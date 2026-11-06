@@ -24,15 +24,54 @@
     <main class="container py-5">
 
         <h2 class="mb-4">Nuestros muebles</h2>
+        
+        <form action="<?= site_url('catalogo') ?>" method="get" class="row g-3 mb-4">
+
+            <div class="col-12 col-md-9">
+                <label for="buscar" class="form-label">
+                    Buscar muebles
+                </label>
+
+                <input
+                    type="search"
+                    id="buscar"
+                    name="buscar"
+                    class="form-control"
+                    placeholder="Ejemplo: sofá, mesa, cama..."
+                    value="<?= esc($buscar ?? '', 'attr') ?>"
+                >
+            </div>
+
+            <div class="col-12 col-md-3 d-flex align-items-end">
+                <button type="submit" class="btn btn-primary w-100">
+                    Buscar
+                </button>
+            </div>
+
+        </form>
+
 
         <div class="row g-4">
 
             <?php if (empty($muebles)): ?>
 
                 <div class="col-12">
+                    
                     <div class="alert alert-info">
-                        Actualmente no hay muebles disponibles.
+
+                        <?php if (!empty($buscar)): ?>
+
+                            No encontramos muebles que coincidan con
+                            <strong><?= esc($buscar) ?></strong>.
+
+                        <?php else: ?>
+
+                            Actualmente no hay muebles disponibles.
+
+                        <?php endif; ?>
+
                     </div>
+
                 </div>
 
             <?php else: ?>

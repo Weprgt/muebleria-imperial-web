@@ -1,0 +1,16 @@
+﻿categoria,nombre,descripcion,precio_gtq,existencias,imagen
+Salas,Sala Esquinera Moderna,"Sala en L tapizada en tela gris, amplia y confortable.",12990,8,Salas/01_Sala_Esquinera_Moderna_Q12990_stock8.jpg
+Salas,Sala Clasica 3-2,Juego de sala con sofa de tres plazas y loveseat de dos plazas.,9990,7,Salas/02_Sala_Clasica_3-2_Q9990_stock7.jpg
+Salas,Sala Reclinable,Juego de sala reclinable en acabado marron para mayor comodidad.,15990,4,Salas/03_Sala_Reclinable_Q15990_stock4.jpg
+Salas,Sala Cama Multifuncional,"Sofa cama azul de tres plazas, practico para visitas.",11990,6,Salas/04_Sala_Cama_Multifuncional_Q11990_stock6.jpg
+Salas,Sala Modular Contemporanea,Sala modular gris configurable para distintos espacios.,17990,3,Salas/05_Sala_Modular_Contemporanea_Q17990_stock3.jpg
+Dormitorios,Dormitorio Clasico,"Conjunto de cama matrimonial, dos buros, comoda y espejo.",14990,5,Dormitorios/06_Dormitorio_Clasico_Q14990_stock5.jpg
+Dormitorios,Dormitorio Moderno Queen,"Conjunto queen con dos buros, comoda y closet.",18990,4,Dormitorios/07_Dormitorio_Moderno_Queen_Q18990_stock4.jpg
+Dormitorios,Dormitorio Juvenil,"Dormitorio juvenil con cama, buro, escritorio y closet.",8990,10,Dormitorios/08_Dormitorio_Juvenil_Q8990_stock10.jpg
+Dormitorios,Dormitorio Rustico,"Dormitorio de madera con cama matrimonial, buros y comoda.",13990,6,Dormitorios/09_Dormitorio_Rustico_Q13990_stock6.jpg
+Dormitorios,Dormitorio Elegante,"Conjunto king con cabecera capitonada, buros y comoda.",22990,3,Dormitorios/10_Dormitorio_Elegante_Q22990_stock3.jpg
+Comedores,Comedor Elegante 6 Plazas,Mesa rectangular de madera con seis sillas tapizadas.,10990,10,Comedores/11_Comedor_Elegante_6_Plazas_Q10990_stock10.jpg
+Comedores,Comedor Redondo 4 Plazas,Mesa redonda de madera y cuatro sillas para espacios compactos.,7990,12,Comedores/12_Comedor_Redondo_4_Plazas_Q7990_stock12.jpg
+Comedores,Comedor Familiar 8 Plazas,Mesa amplia de madera con ocho sillas tapizadas.,16990,5,Comedores/13_Comedor_Familiar_8_Plazas_Q16990_stock5.jpg
+Comedores,Comedor Moderno 6 Plazas,Mesa de vidrio templado con seis sillas modernas.,12990,7,Comedores/14_Comedor_Moderno_6_Plazas_Q12990_stock7.jpg
+Comedores,Comedor Alto 4 Plazas,Mesa alta estilo barra con cuatro taburetes.,9990,8,Comedores/15_Comedor_Alto_4_Plazas_Q9990_stock8.jpg

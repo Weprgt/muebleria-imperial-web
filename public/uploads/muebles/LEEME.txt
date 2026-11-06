@@ -1,0 +1,1 @@
+Catalogo de prueba Muebleria Imperial: 15 productos, 5 por categoria. Precios y existencias ficticios en quetzales (GTQ). Las imagenes son recortes de una composicion generada por IA; son referencias visuales, no fotografias de inventario real. El archivo productos.csv contiene los datos de cada producto.
