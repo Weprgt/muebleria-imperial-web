@@ -9,8 +9,9 @@ class CatalogoController extends BaseController
     public function index()
     {
         $muebleModel = new MuebleModel();
+        $buscar = trim((string) $this->request->getGet('buscar'));
 
-        $muebles = $muebleModel
+        $consulta = $muebleModel
             ->select('
                 muebles.id,
                 muebles.nombre,
@@ -25,7 +26,13 @@ class CatalogoController extends BaseController
                 'categorias_muebles.id = muebles.categoria_id'
             )
             ->where('muebles.activo', 1)
-            ->where('categorias_muebles.activo', 1)
+            ->where('categorias_muebles.activo', 1);
+
+        if ($buscar !== '') {
+            $consulta->like('muebles.nombre', $buscar);
+        }
+
+        $muebles = $consulta
             ->orderBy('muebles.nombre', 'ASC')
             ->findAll();
 
