@@ -39,7 +39,6 @@ class AdminMueblesController extends BaseController
         ]);
     }
 
-    
     public function guardar()
     {
         // 1. Validar los datos recibidos del formulario.
@@ -49,10 +48,15 @@ class AdminMueblesController extends BaseController
             'descripcion'  => 'permit_empty',
             'precio'       => 'required|numeric|greater_than[0]',
             'stock'        => 'required|is_natural',
-            'imagen_principal' => 'permit_empty|max_length[255]',
+            'imagen_principal' => 'permit_empty|is_image[imagen_principal]|mime_in[imagen_principal,image/jpg,image/jpeg,image/png,image/webp]|max_size[imagen_principal,2048]',
         ];
 
-        if (! $this->validateData($this->request->getPost(), $reglas)) {
+        $datosFormulario = array_merge(
+            $this->request->getPost(),
+            $this->request->getFiles()
+        );
+
+        if (! $this->validateData($datosFormulario, $reglas)) {
             return redirect()
                 ->back()
                 ->withInput()
@@ -61,6 +65,34 @@ class AdminMueblesController extends BaseController
 
         // 2. Obtener los datos validados.
         $datos = $this->validator->getValidated();
+        $imagen = $this->request->getFile('imagen_principal');
+        $rutaImagen = '';
+
+        if ($imagen !== null && $imagen->isValid()) {
+
+            // Generar un nombre único para evitar duplicados.
+            $nombreImagen = $imagen->getRandomName();
+
+            // Guardar la fotografía en la carpeta pública.
+            try {
+                $imagen->move(
+                    FCPATH . 'uploads/muebles',
+                    $nombreImagen
+                );
+            } catch (\Throwable $e) {
+                log_message('error', 'Error al subir imagen: ' . $e->getMessage());
+
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('errors', [
+                        'imagen_principal' => 'No se pudo guardar la fotografía.'
+                    ]);
+            }
+
+            // Preparar la ruta que almacenaremos en MySQL.
+            $rutaImagen = 'uploads/muebles/' . $nombreImagen;
+        }
 
         // 3. Verificar que la categoría exista y esté activa.
         $categoriaModel = new \App\Models\CategoriaMuebleModel();
@@ -86,7 +118,7 @@ class AdminMueblesController extends BaseController
             'descripcion'      => trim($datos['descripcion'] ?? ''),
             'precio'           => $datos['precio'],
             'stock'            => $datos['stock'],
-            'imagen_principal' => trim($datos['imagen_principal'] ?? ''),
+            'imagen_principal' => $rutaImagen,
             'activo'           => 1,
         ];
 
@@ -136,6 +168,7 @@ class AdminMueblesController extends BaseController
             'categorias' => $categorias
         ]);
     }
+
     public function actualizar($id)
     {
         $muebleModel = new MuebleModel();
@@ -156,16 +189,53 @@ class AdminMueblesController extends BaseController
             'descripcion' => 'permit_empty',
             'precio' => 'required|numeric|greater_than[0]',
             'stock' => 'required|is_natural',
-            'imagen_principal' => 'permit_empty|max_length[255]',
+            'imagen_principal' => 'permit_empty|is_image[imagen_principal]|mime_in[imagen_principal,image/jpg,image/jpeg,image/png,image/webp]|max_size[imagen_principal,2048]',
         ];
 
-        if (! $this->validateData($this->request->getPost(), $reglas)) {
+        $datosFormulario = array_merge(
+            $this->request->getPost(),
+            $this->request->getFiles()
+        );
+
+        if (! $this->validateData($datosFormulario, $reglas)) {
             return redirect()->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
         }
 
         $datos = $this->validator->getValidated();
+        $imagen = $this->request->getFile('imagen_principal');
+        $rutaImagen = $mueble['imagen_principal'] ?? '';
+        if ($imagen !== null && $imagen->isValid()) {
+
+            // Generar un nombre único para la nueva fotografía.
+            $nombreImagen = $imagen->getRandomName();
+
+            try {
+                // Guardar la nueva fotografía.
+                $imagen->move(
+                    FCPATH . 'uploads/muebles',
+                    $nombreImagen
+                );
+
+                // Actualizar la ruta de la fotografía.
+                $rutaImagen = 'uploads/muebles/' . $nombreImagen;
+
+            } catch (\Throwable $e) {
+
+                log_message(
+                    'error',
+                    'Error al actualizar imagen: ' . $e->getMessage()
+                );
+
+                return redirect()
+                    ->back()
+                    ->withInput()
+                    ->with('errors', [
+                        'imagen_principal' => 'No se pudo guardar la nueva fotografía.'
+                    ]);
+            }
+        }
 
         // Comprobar que la categoría existe y está activa.
         $categoriaModel = new \App\Models\CategoriaMuebleModel();
@@ -190,7 +260,7 @@ class AdminMueblesController extends BaseController
             'descripcion' => trim($datos['descripcion'] ?? ''),
             'precio' => $datos['precio'],
             'stock' => $datos['stock'],
-            'imagen_principal' => trim($datos['imagen_principal'] ?? ''),
+            'imagen_principal' => $rutaImagen,
         ];
 
         // Actualizar el registro en MySQL.

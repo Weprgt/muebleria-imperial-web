@@ -45,7 +45,8 @@
     <form action="<?= isset($mueble)
         ? site_url('admin/muebles/actualizar/' . $mueble['id'])
         : site_url('admin/muebles/guardar') ?>"
-        method="post">
+        method="post"
+        enctype="multipart/form-data">
 
         <?= csrf_field() ?>
 
@@ -130,15 +131,19 @@
 
         <div class="mb-4">
             <label for="imagen_principal" class="form-label">
-                Ruta de imagen (opcional)
+                Fotografía del mueble (opcional)
             </label>
 
-            <input type="text"
-                   name="imagen_principal"
-                   id="imagen_principal"
-                   value="<?= esc(old('imagen_principal', $mueble['imagen_principal'] ?? '')) ?>"
-                   class="form-control"
-                   placeholder="uploads/muebles/sofa.jpg">
+            <input type="file"
+                name="imagen_principal"
+                id="imagen_principal"
+                class="form-control"
+                accept=".jpg,.jpeg,.png,.webp">
+
+            <div class="form-text">
+                Formatos permitidos: JPG, PNG y WebP.
+                Tamaño máximo: 2 MB.
+            </div>
         </div>
 
         <div class="d-flex gap-2">
