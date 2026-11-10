@@ -58,3 +58,32 @@ $routes->post('admin/muebles/actualizar/(:num)',
 $routes->post('admin/muebles/cambiar-estado/(:num)', 
     'AdminMueblesController::cambiarEstado/$1', [
     'filter' => 'role:1']);
+
+// Administración de categorías
+$routes->get('admin/categorias', 
+    'AdminCategoriasController::index', [
+    'filter' => 'role:1']);
+
+$routes->get('admin/categorias/agregar', 
+    'AdminCategoriasController::agregar', [
+    'filter' => 'role:1']);
+
+$routes->post('admin/categorias/guardar', 
+    'AdminCategoriasController::guardar', [
+    'filter' => 'role:1']);
+
+$routes->get('admin/categorias/editar/(:num)', 
+    'AdminCategoriasController::editar/$1', [
+    'filter' => 'role:1']);
+
+$routes->post('admin/categorias/actualizar/(:num)', 
+    'AdminCategoriasController::actualizar/$1', [
+    'filter' => 'role:1']);
+
+$routes->post('admin/categorias/desactivar/(:num)', 
+    'AdminCategoriasController::desactivar/$1', [
+    'filter' => 'role:1']);
+
+$routes->post('admin/categorias/reactivar/(:num)', 
+    'AdminCategoriasController::reactivar/$1', [
+    'filter' => 'role:1']);
