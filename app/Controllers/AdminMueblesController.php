@@ -108,5 +108,135 @@ class AdminMueblesController extends BaseController
             ->with('success', 'Mueble registrado correctamente.');
     }
 
+    public function editar($id)
+    {
+        $muebleModel = new MuebleModel();
+
+        // Buscar el mueble por su ID.
+        $mueble = $muebleModel->find($id);
+
+        // Verificar que el mueble exista.
+        if (! $mueble) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound(
+                'El mueble solicitado no existe.'
+            );
+        }
+
+        // Obtener las categorías activas.
+        $categoriaModel = new \App\Models\CategoriaMuebleModel();
+
+        $categorias = $categoriaModel
+            ->where('activo', 1)
+            ->orderBy('nombre', 'ASC')
+            ->findAll();
+
+        // Enviar los datos a la vista de edición.
+        return view('admin/muebles/formulario', [
+            'mueble'     => $mueble,
+            'categorias' => $categorias
+        ]);
+    }
+    public function actualizar($id)
+    {
+        $muebleModel = new MuebleModel();
+
+        // Comprobar que el mueble existe.
+        $mueble = $muebleModel->find($id);
+
+        if (! $mueble) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound(
+                'El mueble solicitado no existe.'
+            );
+        }
+
+        // Validar los datos recibidos.
+        $reglas = [
+            'categoria_id' => 'required|is_natural_no_zero',
+            'nombre' => 'required|max_length[150]',
+            'descripcion' => 'permit_empty',
+            'precio' => 'required|numeric|greater_than[0]',
+            'stock' => 'required|is_natural',
+            'imagen_principal' => 'permit_empty|max_length[255]',
+        ];
+
+        if (! $this->validateData($this->request->getPost(), $reglas)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', $this->validator->getErrors());
+        }
+
+        $datos = $this->validator->getValidated();
+
+        // Comprobar que la categoría existe y está activa.
+        $categoriaModel = new \App\Models\CategoriaMuebleModel();
+
+        $categoria = $categoriaModel
+            ->where('id', $datos['categoria_id'])
+            ->where('activo', 1)
+            ->first();
+
+        if (! $categoria) {
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', [
+                    'categoria_id' => 'La categoría seleccionada no es válida.'
+                ]);
+        }
+
+        // Preparar los datos actualizados.
+        $datosActualizados = [
+            'categoria_id' => $datos['categoria_id'],
+            'nombre' => trim($datos['nombre']),
+            'descripcion' => trim($datos['descripcion'] ?? ''),
+            'precio' => $datos['precio'],
+            'stock' => $datos['stock'],
+            'imagen_principal' => trim($datos['imagen_principal'] ?? ''),
+        ];
+
+        // Actualizar el registro en MySQL.
+        if (! $muebleModel->update($id, $datosActualizados)) {
+            return redirect()->back()
+                ->withInput()
+                ->with('errors', [
+                    'general' => 'No se pudo actualizar el mueble.'
+                ]);
+        }
+
+        return redirect()->to(site_url('admin/muebles'))
+            ->with('success', 'Mueble actualizado correctamente.');
+    }
+
+    public function cambiarEstado($id)
+    {
+        $muebleModel = new MuebleModel();
+
+        // Buscar el mueble por su ID.
+        $mueble = $muebleModel->find($id);
+
+        // Comprobar que existe.
+        if (! $mueble) {
+            throw \CodeIgniter\Exceptions\PageNotFoundException::forPageNotFound(
+                'El mueble solicitado no existe.'
+            );
+        }
+
+        // Cambiar el estado actual.
+        $nuevoEstado = (int) $mueble['activo'] === 1 ? 0 : 1;
+
+        // Actualizar únicamente el campo activo.
+        if (! $muebleModel->update($id, ['activo' => $nuevoEstado])) {
+            return redirect()->to(site_url('admin/muebles'))
+                ->with('errors', [
+                    'general' => 'No se pudo cambiar el estado del mueble.'
+                ]);
+        }
+
+        $mensaje = $nuevoEstado === 1
+            ? 'Mueble activado correctamente.'
+            : 'Mueble desactivado correctamente.';
+
+        return redirect()->to(site_url('admin/muebles'))
+            ->with('success', $mensaje);
+    }
 
 }

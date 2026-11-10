@@ -97,9 +97,27 @@
                             </td>
 
                             <td>
-                                <span class="text-muted small">
-                                    Próximamente
-                                </span>
+                                <!-- Botón para editar el mueble -->
+                                <a href="<?= site_url('admin/muebles/editar/' . $mueble['id']) ?>"
+                                class="btn btn-sm btn-primary me-2">
+                                    Editar
+                                </a>
+
+                                <!-- Botón para activar o desactivar -->
+                                <form action="<?= site_url('admin/muebles/cambiar-estado/' . $mueble['id']) ?>"
+                                    method="post"
+                                    class="d-inline">
+
+                                    <?= csrf_field() ?>
+
+                                    <button type="submit"
+                                            class="btn btn-sm <?= (int) $mueble['activo'] === 1 ? 'btn-danger' : 'btn-success' ?>"
+                                            onclick="return confirm('¿Confirmas que deseas cambiar el estado de este mueble?')">
+
+                                        <?= (int) $mueble['activo'] === 1 ? 'Desactivar' : 'Activar' ?>
+
+                                    </button>
+                                </form>
                             </td>
                         </tr>
 

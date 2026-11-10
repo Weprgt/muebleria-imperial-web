@@ -22,7 +22,9 @@
 
 <main class="container py-5">
 
-    <h2 class="mb-4">Agregar nuevo mueble</h2>
+    <h2 class="mb-4">
+        <?= isset($mueble) ? 'Editar mueble' : 'Agregar nuevo mueble' ?>
+    </h2>
     
         <?php $errores = session()->getFlashdata('errors'); ?>
 
@@ -40,8 +42,10 @@
             </div>
         <?php endif; ?>
 
-    <form action="<?= site_url('admin/muebles/guardar') ?>"
-          method="post">
+    <form action="<?= isset($mueble)
+        ? site_url('admin/muebles/actualizar/' . $mueble['id'])
+        : site_url('admin/muebles/guardar') ?>"
+        method="post">
 
         <?= csrf_field() ?>
 
@@ -58,7 +62,8 @@
                 <option value="">Seleccione una categoría</option>
 
                 <?php foreach ($categorias as $categoria): ?>
-                    <option value="<?= esc($categoria['id'], 'attr') ?>">
+                    <option value="<?= esc($categoria['id']) ?>"
+                        <?= (string) old('categoria_id', $mueble['categoria_id'] ?? '') === (string) $categoria['id'] ? 'selected' : '' ?>>
                         <?= esc($categoria['nombre']) ?>
                     </option>
                 <?php endforeach; ?>
@@ -74,6 +79,7 @@
             <input type="text"
                    name="nombre"
                    id="nombre"
+                   value="<?= esc(old('nombre', $mueble['nombre'] ?? '')) ?>"
                    class="form-control"
                    maxlength="150"
                    required>
@@ -87,7 +93,8 @@
             <textarea name="descripcion"
                       id="descripcion"
                       class="form-control"
-                      rows="4"></textarea>
+                      rows="4"><?= esc(old('descripcion', $mueble['descripcion'] ?? '')) ?>
+            </textarea>
         </div>
 
         <div class="mb-3">
@@ -98,6 +105,7 @@
             <input type="number"
                    name="precio"
                    id="precio"
+                   value="<?= esc(old('precio', $mueble['precio'] ?? '')) ?>"
                    class="form-control"
                    min="0.01"
                    max="99999999.99"
@@ -113,6 +121,7 @@
             <input type="number"
                    name="stock"
                    id="stock"
+                   value="<?= esc(old('stock', $mueble['stock'] ?? '')) ?>"
                    class="form-control"
                    min="0"
                    step="1"
@@ -127,13 +136,14 @@
             <input type="text"
                    name="imagen_principal"
                    id="imagen_principal"
+                   value="<?= esc(old('imagen_principal', $mueble['imagen_principal'] ?? '')) ?>"
                    class="form-control"
                    placeholder="uploads/muebles/sofa.jpg">
         </div>
 
         <div class="d-flex gap-2">
             <button type="submit" class="btn btn-primary">
-                Guardar mueble
+                <?= isset($mueble) ? 'Actualizar mueble' : 'Guardar mueble' ?>
             </button>
 
             <a href="<?= site_url('admin/muebles') ?>"

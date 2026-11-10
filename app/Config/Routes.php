@@ -47,3 +47,14 @@ $routes->get('admin/muebles/agregar', 'AdminMueblesController::agregar', [
 
 $routes->post('admin/muebles/guardar', 'AdminMueblesController::guardar', [
     'filter' => 'role:1']);
+
+$routes->get('admin/muebles/editar/(:num)', 'AdminMueblesController::editar/$1', [
+    'filter' => 'role:1']);
+
+$routes->post('admin/muebles/actualizar/(:num)', 
+    'AdminMueblesController::actualizar/$1', [
+    'filter' => 'role:1']);
+
+$routes->post('admin/muebles/cambiar-estado/(:num)', 
+    'AdminMueblesController::cambiarEstado/$1', [
+    'filter' => 'role:1']);
