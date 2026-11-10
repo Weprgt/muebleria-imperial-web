@@ -56,7 +56,7 @@ class AdminMueblesController extends BaseController
             $this->request->getFiles()
         );
 
-        if (! $this->validateData($datosFormulario, $reglas)) {
+        if (! $this->validateData($this->request->getPost(), $reglas)) {
             return redirect()
                 ->back()
                 ->withInput()
@@ -192,13 +192,9 @@ class AdminMueblesController extends BaseController
             'imagen_principal' => 'permit_empty|is_image[imagen_principal]|mime_in[imagen_principal,image/jpg,image/jpeg,image/png,image/webp]|max_size[imagen_principal,2048]',
         ];
 
-        $datosFormulario = array_merge(
-            $this->request->getPost(),
-            $this->request->getFiles()
-        );
-
-        if (! $this->validateData($datosFormulario, $reglas)) {
-            return redirect()->back()
+        if (! $this->validateData($this->request->getPost(), $reglas)) {
+            return redirect()
+                ->back()
                 ->withInput()
                 ->with('errors', $this->validator->getErrors());
         }

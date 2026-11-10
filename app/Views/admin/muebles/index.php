@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -23,7 +22,16 @@
 
 <main class="container py-5">
 
-    <h2 class="mb-4">Inventario de muebles</h2>
+    <div class="d-flex justify-content-between align-items-center mb-4">
+
+    <h2 class="mb-0">Inventario de muebles</h2>
+
+        <a href="<?= site_url('admin/muebles/agregar') ?>"
+            class="btn btn-success">
+            + Nuevo mueble
+        </a>
+
+    </div>
 
         <?php $mensaje = session()->getFlashdata('success'); ?>
 
