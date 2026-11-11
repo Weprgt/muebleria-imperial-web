@@ -194,9 +194,40 @@
                         </span>
                     </h3>
 
-                    <p class="text-muted mb-0">
-                        Los productos del carrito todavía no reservan existencias.
-                    </p>
+                    
+                    <?php if (
+                        session('logueado') === true &&
+                        (int) session('rol_id') === 4
+                    ): ?>
+
+                        <form
+                            action="<?= site_url('pedidos/confirmar') ?>"
+                            method="post"
+                            class="mt-3"
+                            onsubmit="return confirm('¿Deseas confirmar este pedido?');"
+                        >
+                            <?= csrf_field() ?>
+
+                            <button type="submit" class="btn btn-success">
+                                Confirmar pedido
+                            </button>
+                        </form>
+
+                    <?php else: ?>
+
+                        <div class="mt-3">
+                            <p class="text-muted mb-2">
+                                Inicia sesión como cliente para confirmar tu pedido.
+                            </p>
+
+                            <a href="<?= site_url('login') ?>"
+                            class="btn btn-primary">
+                                Iniciar sesión
+                            </a>
+                        </div>
+
+                    <?php endif; ?>
+
 
                 </div>
             </div>

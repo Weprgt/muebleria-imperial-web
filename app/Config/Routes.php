@@ -96,3 +96,18 @@ $routes->get('carrito', 'CarritoController::index');
 $routes->post('carrito/agregar', 'CarritoController::agregar');
 $routes->post('carrito/eliminar', 'CarritoController::eliminar');
 $routes->post('carrito/actualizar', 'CarritoController::actualizar');
+
+// Confirmacion de pedidos: exclusivamente clientes autenticados
+$routes->post('pedidos/confirmar', 'PedidoController::confirmar', [
+    'filter' => 'role:4'
+]);
+
+// Registro de pagos: exclusivamente clientes autenticados
+$routes->post('pagos/registrar', 'PagoPedidoController::registrar', [
+    'filter' => 'role:4'
+]);
+
+// Consulta de pedidos del cliente autenticado
+$routes->get('mis-pedidos', 'MisPedidosController::index', [
+    'filter' => 'role:4'
+]);
