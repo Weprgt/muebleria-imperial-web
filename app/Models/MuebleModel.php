@@ -18,6 +18,7 @@ class MuebleModel extends Model
         'descripcion',
         'precio',
         'stock',
+        'stock_reservado',
         'imagen_principal',
         'activo'
     ];

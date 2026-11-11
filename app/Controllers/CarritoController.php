@@ -112,7 +112,7 @@ class CarritoController extends BaseController
 
         $session->set('carrito', $carrito);
 
-        return redirect()->to(site_url('catalogo'))
+        return redirect()->to(site_url('carrito'))
             ->with('success', 'Mueble agregado al carrito correctamente.');
     }
 

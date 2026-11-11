@@ -71,7 +71,7 @@ class PedidoController extends BaseController
 
                 // Consultar datos reales del producto.
                 $mueble = $muebleModel
-                    ->select('muebles.id, muebles.precio, muebles.stock')
+                    ->select('muebles.id, muebles.precio, muebles.stock, muebles.stock_reservado')
                     ->join(
                         'categorias_muebles',
                         'categorias_muebles.id = muebles.categoria_id'
@@ -87,7 +87,12 @@ class PedidoController extends BaseController
                     );
                 }
 
-                if ($cantidadValidada > (int) $mueble['stock']) {
+                $stockDisponible = max(
+                    0,
+                    (int) $mueble['stock'] - (int) $mueble['stock_reservado']
+                );
+
+                if ($cantidadValidada > $stockDisponible) {
                     throw new \RuntimeException(
                         'Las existencias cambiaron. Revisa tu carrito.'
                     );

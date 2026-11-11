@@ -111,3 +111,18 @@ $routes->post('pagos/registrar', 'PagoPedidoController::registrar', [
 $routes->get('mis-pedidos', 'MisPedidosController::index', [
     'filter' => 'role:4'
 ]);
+
+// Consulta de pagos pendientes: Administrador y Ventas
+$routes->get('pagos/pendientes', 'VerificacionPagosController::index', [
+    'filter' => 'role:1,2'
+]);
+
+// Aprobar anticipos: Administrador y Ventas
+$routes->post('pagos/(:num)/aprobar', 'VerificacionPagosController::aprobar/$1', [
+    'filter' => 'role:1,2'
+]);
+
+// Rechazar anticipos: Administrador y Ventas
+$routes->post('pagos/(:num)/rechazar', 'VerificacionPagosController::rechazar/$1', [
+    'filter' => 'role:1,2'
+]);
