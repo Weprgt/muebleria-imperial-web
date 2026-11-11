@@ -19,11 +19,26 @@
                 <h1 class="h3 mb-1">Mueblería Imperial</h1>
                 <p class="mb-0">Mi carrito de compras</p>
             </div>
+            
+            <div class="d-flex flex-wrap gap-2">
 
-            <a href="<?= site_url('catalogo') ?>"
-               class="btn btn-outline-light">
-                Seguir comprando
-            </a>
+                <?php if (
+                    session('logueado') === true &&
+                    (int) session('rol_id') === 4
+                ): ?>
+                    <a href="<?= site_url('mis-pedidos') ?>"
+                    class="btn btn-warning">
+                        Mis pedidos
+                    </a>
+                <?php endif; ?>
+
+                <a href="<?= site_url('catalogo') ?>"
+                class="btn btn-outline-light">
+                    Seguir comprando
+                </a>
+
+            </div>
+
         </div>
     </header>
 
@@ -35,6 +50,17 @@
                 role="alert">
 
                 <?= esc(session()->getFlashdata('success')) ?>
+                <?php if (
+                    session('logueado') === true &&
+                    (int) session('rol_id') === 4
+                ): ?>
+                    <div class="mt-3">
+                        <a href="<?= site_url('mis-pedidos') ?>"
+                        class="btn btn-success btn-sm">
+                            Ver mis pedidos
+                        </a>
+                    </div>
+                <?php endif; ?>
 
                 <button type="button"
                         class="btn-close"
@@ -73,8 +99,8 @@
             </div>
 
             <a href="<?= site_url('catalogo') ?>"
-               class="btn btn-primary">
-                Ver catálogo
+                class="btn btn-primary">
+                    Ver catálogo
             </a>
 
         <?php else: ?>
