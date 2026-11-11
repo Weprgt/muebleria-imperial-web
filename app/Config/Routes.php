@@ -92,3 +92,7 @@ $routes->post('admin/categorias/reactivar/(:num)',
     'AdminCategoriasController::reactivar/$1', [
     'filter' => 'role:1']);
 
+$routes->get('carrito', 'CarritoController::index');
+$routes->post('carrito/agregar', 'CarritoController::agregar');
+$routes->post('carrito/eliminar', 'CarritoController::eliminar');
+$routes->post('carrito/actualizar', 'CarritoController::actualizar');

@@ -21,6 +21,41 @@
     </header>
 
     <main class="container py-5">
+        
+        <?php if (session()->getFlashdata('success')): ?>
+
+            <div class="alert alert-success alert-dismissible fade show"
+                role="alert">
+
+                <?= esc(session()->getFlashdata('success')) ?>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Cerrar">
+                </button>
+
+            </div>
+
+        <?php endif; ?>
+
+        <?php if (session()->getFlashdata('error')): ?>
+
+            <div class="alert alert-danger alert-dismissible fade show"
+                role="alert">
+
+                <?= esc(session()->getFlashdata('error')) ?>
+
+                <button type="button"
+                        class="btn-close"
+                        data-bs-dismiss="alert"
+                        aria-label="Cerrar">
+                </button>
+
+            </div>
+
+        <?php endif; ?>
+
 
         <h2 class="mb-4">Nuestros muebles</h2>
         
@@ -126,11 +161,29 @@
                                     ) ?>
                                 </p>
 
+                                
                                 <?php if ($mueble['stock'] > 0): ?>
 
-                                    <span class="badge text-bg-success">
+                                    <span class="badge text-bg-success mb-3">
                                         Disponible
                                     </span>
+
+                                    <form action="<?= site_url('carrito/agregar') ?>"
+                                        method="post">
+
+                                        <?= csrf_field() ?>
+
+                                        <input
+                                            type="hidden"
+                                            name="mueble_id"
+                                            value="<?= esc($mueble['id'], 'attr') ?>"
+                                        >
+
+                                        <button type="submit" class="btn btn-primary w-100">
+                                            Agregar al carrito
+                                        </button>
+
+                                    </form>
 
                                 <?php else: ?>
 
@@ -138,7 +191,12 @@
                                         Agotado
                                     </span>
 
+                                    <button class="btn btn-secondary w-100 mt-3" disabled>
+                                        No disponible
+                                    </button>
+
                                 <?php endif; ?>
+
 
                             </div>
 

@@ -37,7 +37,8 @@ class CatalogoController extends BaseController
             ->findAll();
 
         return view('frontend/catalogo', [
-            'muebles' => $muebles
+            'muebles' => $muebles,
+            'buscar'  => $buscar,
         ]);
     }
 }
