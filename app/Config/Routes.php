@@ -12,6 +12,10 @@ $routes->get('catalogo', 'CatalogoController::index');
 $routes->get('login', 'AuthController::login');
 $routes->post('login', 'AuthController::autenticar');
 
+// Registro público de clientes
+$routes->get('registro', 'RegistroController::index');
+$routes->post('registro', 'RegistroController::guardar');
+
 // Rutas protegidas
 $routes->get('dashboard', 'DashboardController::index', [
     'filter' => 'auth'
@@ -87,3 +91,4 @@ $routes->post('admin/categorias/desactivar/(:num)',
 $routes->post('admin/categorias/reactivar/(:num)', 
     'AdminCategoriasController::reactivar/$1', [
     'filter' => 'role:1']);
+

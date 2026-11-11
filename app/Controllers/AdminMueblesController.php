@@ -65,6 +65,24 @@ class AdminMueblesController extends BaseController
 
         // 2. Obtener los datos validados.
         $datos = $this->validator->getValidated();
+
+        // 3. Verificar que la categoría exista y esté activa.
+        $categoriaModel = new \App\Models\CategoriaMuebleModel();
+
+        $categoria = $categoriaModel
+            ->where('id', $datos['categoria_id'])
+            ->where('activo', 1)
+            ->first();
+
+        if (! $categoria) {
+            return redirect()
+                ->back()
+                ->withInput()
+                ->with('errors', [
+                    'categoria_id' => 'La categoría seleccionada no es válida.'
+                ]);
+        }
+
         $imagen = $this->request->getFile('imagen_principal');
         $rutaImagen = '';
 
@@ -94,23 +112,6 @@ class AdminMueblesController extends BaseController
             $rutaImagen = 'uploads/muebles/' . $nombreImagen;
         }
 
-        // 3. Verificar que la categoría exista y esté activa.
-        $categoriaModel = new \App\Models\CategoriaMuebleModel();
-
-        $categoria = $categoriaModel
-            ->where('id', $datos['categoria_id'])
-            ->where('activo', 1)
-            ->first();
-
-        if (! $categoria) {
-            return redirect()
-                ->back()
-                ->withInput()
-                ->with('errors', [
-                    'categoria_id' => 'La categoría seleccionada no es válida.'
-                ]);
-        }
-
         // 4. Preparar los datos para MySQL.
         $mueble = [
             'categoria_id'     => $datos['categoria_id'],
@@ -126,6 +127,16 @@ class AdminMueblesController extends BaseController
         $muebleModel = new MuebleModel();
 
         if (! $muebleModel->insert($mueble)) {
+
+            // Eliminar la fotografía subida si no se pudo registrar el mueble.
+            if ($rutaImagen !== '') {
+                $rutaArchivo = FCPATH . $rutaImagen;
+
+                if (is_file($rutaArchivo)) {
+                    unlink($rutaArchivo);
+                }
+            }
+
             return redirect()
                 ->back()
                 ->withInput()
