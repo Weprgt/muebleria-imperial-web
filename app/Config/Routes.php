@@ -126,3 +126,13 @@ $routes->post('pagos/(:num)/aprobar', 'VerificacionPagosController::aprobar/$1',
 $routes->post('pagos/(:num)/rechazar', 'VerificacionPagosController::rechazar/$1', [
     'filter' => 'role:1,2'
 ]);
+
+// Consultar pedidos pendientes de entrega: Administrador y Ventas
+$routes->get('entregas/pendientes', 'EntregaPedidoController::index', [
+    'filter' => 'role:1,2'
+]);
+
+// Registrar la entrega de un pedido: Administrador y Ventas
+$routes->post('entregas/(:num)/registrar', 'EntregaPedidoController::registrar/$1', [
+    'filter' => 'role:1,2'
+]);

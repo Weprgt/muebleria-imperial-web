@@ -180,8 +180,26 @@
                 </section>
             </div>
         <?php endif; ?>
+    <?php if (in_array((int) session()->get('rol_id'), [1, 2], true)): ?>
+        <div class="col-md-6">
+            <section class="dashboard-card">
 
-        <?php if (in_array((int) session()->get('rol_id'), [1, 2], true)): ?>
+                <div class="fs-1 mb-3">🚚</div>
+
+                <h2>Entregas pendientes</h2>
+
+                <p>
+                    Consulta los pedidos confirmados y gestiona
+                    las entregas de los clientes.
+                </p>
+
+                <a href="<?= site_url('entregas/pendientes') ?>"
+                class="btn btn-imperial">
+                    Gestionar entregas
+                </a>
+
+            </section>
+        </div>
 
             <div class="col-md-6">
                 <section class="dashboard-card">
