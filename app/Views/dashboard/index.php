@@ -138,6 +138,28 @@
             </section>
         </div>
 
+        <?php if ((int) session()->get('rol_id') === 4): ?>
+            <div class="col-md-6">
+                <section class="dashboard-card">
+
+                    <div class="fs-1 mb-3">📦</div>
+
+                    <h2>Mis pedidos</h2>
+
+                    <p>
+                        Consulta tus compras, revisa el estado
+                        de tus pedidos y registra tus pagos.
+                    </p>
+
+                    <a href="<?= site_url('mis-pedidos') ?>"
+                    class="btn btn-imperial">
+                        Ver mis pedidos
+                    </a>
+
+                </section>
+            </div>
+        <?php endif; ?>
+
         <?php if ((int) session()->get('rol_id') === 1): ?>
             <div class="col-md-6">
                 <section class="dashboard-card">

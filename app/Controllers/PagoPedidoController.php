@@ -59,7 +59,12 @@ class PagoPedidoController extends BaseController
                 );
             }
 
-            if ($resultado['estado'] !== 'PENDIENTE_ANTICIPO') {
+            $estadosPermitidos = [
+                'PENDIENTE_ANTICIPO',
+                'CONFIRMADO',
+            ];
+
+            if (!in_array($resultado['estado'], $estadosPermitidos, true)) {
                 throw new \RuntimeException(
                     'Este pedido no admite nuevos pagos.'
                 );

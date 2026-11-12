@@ -158,7 +158,7 @@ class VerificacionPagosController extends BaseController
 
             // Bloquear primero el pedido para serializar aprobaciones.
             $pedido = $db->query(
-                'SELECT id, estado, anticipo_requerido
+                'SELECT id, estado, total, anticipo_requerido
                 FROM pedidos
                 WHERE id = ?
                 FOR UPDATE',
@@ -169,9 +169,14 @@ class VerificacionPagosController extends BaseController
                 throw new \RuntimeException('El pedido no existe.');
             }
 
-            if ($pedido['estado'] !== 'PENDIENTE_ANTICIPO') {
+            $estadosPermitidos = [
+                'PENDIENTE_ANTICIPO',
+                'CONFIRMADO',
+            ];
+
+            if (!in_array($pedido['estado'], $estadosPermitidos, true)) {
                 throw new \RuntimeException(
-                    'El pedido ya no admite aprobación de anticipos.'
+                    'El pedido no admite la aprobación de pagos.'
                 );
             }
 
@@ -234,9 +239,19 @@ class VerificacionPagosController extends BaseController
                     (string) $anterior['monto']
                 );
             }
+            // Impedir que los pagos verificados superen el total del pedido.
+            $totalPedido = $aCentavos((string) $pedido['total']);
 
+            if ($totalVerificado > $totalPedido) {
+                throw new \RuntimeException(
+                    'El pago supera el total pendiente del pedido.'
+                );
+            }
             // Si se alcanza el anticipo, reservar todos los muebles.
-            if ($totalVerificado >= $anticipoRequerido) {
+                if (
+                    $pedido['estado'] === 'PENDIENTE_ANTICIPO'
+                    && $totalVerificado >= $anticipoRequerido
+                ) {
                 $detalles = $db->table('detalle_pedido')
                     ->select('mueble_id, cantidad')
                     ->where('pedido_id', $pedido['id'])
@@ -347,13 +362,19 @@ class VerificacionPagosController extends BaseController
                 );
             }
 
-            return redirect()->to('pagos/pendientes')
-                ->with(
-                    'success',
-                    $totalVerificado >= $anticipoRequerido
-                        ? 'Pago aprobado. Pedido confirmado e inventario reservado.'
-                        : 'Pago aprobado. El pedido sigue pendiente de completar el anticipo.'
-                );
+            $mensaje = match (true) {
+            $pedido['estado'] === 'CONFIRMADO' =>
+                'Abono aprobado correctamente. El inventario permanece reservado.',
+
+            $totalVerificado >= $anticipoRequerido =>
+                'Pago aprobado. Pedido confirmado e inventario reservado.',
+
+            default =>
+                'Pago aprobado. El pedido sigue pendiente de completar el anticipo.',
+        };
+
+        return redirect()->to('pagos/pendientes')
+            ->with('success', $mensaje);
 
         } catch (\Throwable $e) {
             $db->transRollback();

@@ -101,6 +101,11 @@
                         Q<?= number_format($anticipoPendiente, 2) ?>
                     </p>
 
+                    <p>
+                        <strong>Saldo restante del pedido:</strong>
+                        Q<?= number_format(max(0, $total - $verificado), 2) ?>
+                    </p>
+
                     <hr>
 
                     <h4 class="h6">Historial de pagos</h4>
@@ -143,7 +148,13 @@
 
                     <?php endif; ?>
 
-                    <?php if ($pedido['estado'] === 'PENDIENTE_ANTICIPO'): ?>
+                    <?php if (
+                        in_array(
+                            $pedido['estado'],
+                            ['PENDIENTE_ANTICIPO', 'CONFIRMADO'],
+                            true
+                        )
+                    ): ?>
 
                         <hr>
 
