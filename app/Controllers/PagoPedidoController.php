@@ -62,6 +62,7 @@ class PagoPedidoController extends BaseController
             $estadosPermitidos = [
                 'PENDIENTE_ANTICIPO',
                 'CONFIRMADO',
+                'EN_PREPARACION',
             ];
 
             if (!in_array($resultado['estado'], $estadosPermitidos, true)) {

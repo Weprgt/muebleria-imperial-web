@@ -136,3 +136,72 @@ $routes->get('entregas/pendientes', 'EntregaPedidoController::index', [
 $routes->post('entregas/(:num)/registrar', 'EntregaPedidoController::registrar/$1', [
     'filter' => 'role:1,2'
 ]);
+
+// Cancelación directa de pedidos: exclusivamente clientes
+$routes->post(
+    'pedidos/(:num)/cancelar',
+    'CancelacionPedidoController::cancelar/$1',
+    ['filter' => 'role:4']
+);
+
+// Iniciar preparación de pedidos: Administrador y Ventas
+$routes->post(
+    'pedidos/(:num)/iniciar-preparacion',
+    'PreparacionPedidoController::iniciar/$1',
+    ['filter' => 'role:1,2']
+);
+
+$routes->post(
+    'pedidos/(:num)/solicitar-cancelacion',
+    'SolicitudCancelacionController::solicitar/$1',
+    ['filter' => 'role:4']
+);
+
+// Consultar solicitudes de cancelación: Administrador y Ventas
+$routes->get(
+    'gestion-cancelaciones',
+    'GestionCancelacionesController::index',
+    ['filter' => 'role:1,2']
+);
+
+// Aprobar solicitudes de cancelación: Administrador y Ventas
+$routes->post(
+    'gestion-cancelaciones/(:num)/aprobar',
+    'GestionCancelacionesController::aprobar/$1',
+    ['filter' => 'role:1,2']
+);
+
+// Rechazar solicitudes de cancelación: Administrador y Ventas
+$routes->post(
+    'gestion-cancelaciones/(:num)/rechazar',
+    'GestionCancelacionesController::rechazar/$1',
+    ['filter' => 'role:1,2']
+);
+
+// Registrar reembolsos de pedidos cancelados
+$routes->post(
+    'gestion-reembolsos/(:num)/registrar',
+    'ReembolsoPedidoController::registrar/$1',
+    ['filter' => 'role:1,2']
+);
+
+// Panel administrativo de reembolsos
+$routes->get(
+    'gestion-reembolsos',
+    'ReembolsoPedidoController::index',
+    ['filter' => 'role:1,2']
+);
+
+// Confirmar devolución efectiva del dinero
+$routes->post(
+    'gestion-reembolsos/(:num)/procesar',
+    'ReembolsoPedidoController::procesar/$1',
+    ['filter' => 'role:1,2']
+);
+
+// Rechazar una solicitud de reembolso pendiente
+$routes->post(
+    'gestion-reembolsos/(:num)/rechazar',
+    'ReembolsoPedidoController::rechazar/$1',
+    ['filter' => 'role:1,2']
+);

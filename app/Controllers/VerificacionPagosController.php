@@ -45,7 +45,7 @@ class VerificacionPagosController extends BaseController
             'pagos' => $pagos,
         ]);
     }
-
+    
     public function rechazar(int $pagoId): RedirectResponse
     {
         $sesion = session();
@@ -70,24 +70,65 @@ class VerificacionPagosController extends BaseController
         try {
             $db->transBegin();
 
-            // Bloquear el registro para evitar verificaciones simultáneas.
-            $pago = $db->query(
+            // Identificar el pedido antes de adquirir bloqueos.
+            $pagoInicial = $db->query(
+                'SELECT pedido_id
+                FROM pagos_pedido
+                WHERE id = ?',
+                [$pagoId]
+            )->getRowArray();
+
+            if ($pagoInicial === null) {
+                throw new \RuntimeException('El pago no existe.');
+            }
+
+            // Bloquear primero el pedido.
+            $pedido = $db->query(
                 'SELECT id, estado
+                FROM pedidos
+                WHERE id = ?
+                FOR UPDATE',
+                [(int) $pagoInicial['pedido_id']]
+            )->getRowArray();
+
+            if ($pedido === null) {
+                throw new \RuntimeException('El pedido no existe.');
+            }
+
+            if (!in_array(
+                $pedido['estado'],
+                [
+                    'PENDIENTE_ANTICIPO',
+                    'CONFIRMADO',
+                    'EN_PREPARACION',
+                ],
+                true
+            )) {
+                    throw new \RuntimeException(
+                    'El estado del pedido no permite rechazar pagos.'
+                );
+            }
+
+            // Bloquear después el pago.
+            $pago = $db->query(
+                'SELECT id, pedido_id, estado
                 FROM pagos_pedido
                 WHERE id = ?
                 FOR UPDATE',
                 [$pagoId]
             )->getRowArray();
 
-            if ($pago === null) {
-                throw new \RuntimeException('El pago no existe.');
-            }
-
-            if ($pago['estado'] !== 'PENDIENTE') {
+            if (
+                $pago === null
+                || (int) $pago['pedido_id'] !== (int) $pedido['id']
+                || $pago['estado'] !== 'PENDIENTE'
+            ) {
                 throw new \RuntimeException(
-                    'Este pago ya fue procesado.'
+                    'Este pago ya fue procesado o no pertenece al pedido.'
                 );
             }
+
+            $ahora = date('Y-m-d H:i:s');
 
             $db->table('pagos_pedido')
                 ->where('id', $pagoId)
@@ -95,17 +136,27 @@ class VerificacionPagosController extends BaseController
                 ->update([
                     'estado'         => 'RECHAZADO',
                     'verificado_por' => $usuarioId,
-                    'verificado_at'  => date('Y-m-d H:i:s'),
-                    'updated_at'     => date('Y-m-d H:i:s'),
+                    'verificado_at'  => $ahora,
+                    'updated_at'     => $ahora,
                 ]);
 
-            if ($db->transStatus() === false || $db->affectedRows() !== 1) {
+            if (
+                $db->transStatus() === false
+                || $db->affectedRows() !== 1
+            ) {
                 throw new \RuntimeException(
                     'No se pudo registrar el rechazo.'
                 );
             }
 
-            $db->transCommit();
+            if (
+                $db->transStatus() === false
+                || ! $db->transCommit()
+            ) {
+                throw new \RuntimeException(
+                    'No se pudo completar la transacción.'
+                );
+            }
 
             return redirect()->to('pagos/pendientes')
                 ->with('success', 'Pago rechazado correctamente.');
@@ -115,11 +166,15 @@ class VerificacionPagosController extends BaseController
 
             log_message(
                 'error',
-                'Error al rechazar pago ' . $pagoId . ': ' . $e->getMessage()
+                'Error al rechazar pago ' . $pagoId . ': '
+                . $e->getMessage()
             );
 
             return redirect()->to('pagos/pendientes')
-                ->with('error', 'No se pudo rechazar el pago: ' . $e->getMessage());
+                ->with(
+                    'error',
+                    'No se pudo rechazar el pago: ' . $e->getMessage()
+                );
         }
     }
 
@@ -172,6 +227,7 @@ class VerificacionPagosController extends BaseController
             $estadosPermitidos = [
                 'PENDIENTE_ANTICIPO',
                 'CONFIRMADO',
+                'EN_PREPARACION',
             ];
 
             if (!in_array($pedido['estado'], $estadosPermitidos, true)) {
@@ -363,15 +419,18 @@ class VerificacionPagosController extends BaseController
             }
 
             $mensaje = match (true) {
-            $pedido['estado'] === 'CONFIRMADO' =>
-                'Abono aprobado correctamente. El inventario permanece reservado.',
+                $pedido['estado'] === 'EN_PREPARACION' =>
+                    'Pago aprobado correctamente. El pedido continúa en preparación.',
 
-            $totalVerificado >= $anticipoRequerido =>
-                'Pago aprobado. Pedido confirmado e inventario reservado.',
+                $pedido['estado'] === 'CONFIRMADO' =>
+                    'Abono aprobado correctamente. El inventario permanece reservado.',
 
-            default =>
-                'Pago aprobado. El pedido sigue pendiente de completar el anticipo.',
-        };
+                $totalVerificado >= $anticipoRequerido =>
+                    'Pago aprobado. Pedido confirmado e inventario reservado.',
+
+                default =>
+                    'Pago aprobado. El pedido sigue pendiente de completar el anticipo.',
+            };
 
         return redirect()->to('pagos/pendientes')
             ->with('success', $mensaje);

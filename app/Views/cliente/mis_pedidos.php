@@ -158,6 +158,97 @@
 
                         <hr>
 
+                        <h4 class="h6 text-danger">Cancelar pedido</h4>
+
+                        <p class="text-muted small">
+                            Puedes cancelar este pedido porque todavía no
+                            ha comenzado su preparación.
+                            Los pagos realizados no se reembolsan automáticamente.
+                        </p>
+
+                        <form action="<?= site_url(
+                            'pedidos/' . $pedido['id'] . '/cancelar'
+                        ) ?>" method="post"
+                            onsubmit="return confirm('¿Estás seguro de cancelar este pedido?');">
+
+                            <?= csrf_field() ?>
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Motivo de cancelación
+                                </label>
+
+                                <textarea name="motivo"
+                                        class="form-control"
+                                        rows="3"
+                                        minlength="10"
+                                        maxlength="2000"
+                                        required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-outline-danger">
+                                Cancelar pedido
+                            </button>
+                        </form>
+
+                    <?php endif; ?>
+
+                    <?php if ($pedido['estado'] === 'EN_PREPARACION'): ?>
+
+                        <hr>
+
+                        <h4 class="h6 text-danger">
+                            Solicitar cancelación
+                        </h4>
+
+                        <p class="text-muted small">
+                            Tu pedido ya está en preparación.
+                            Administración o Ventas revisará tu solicitud.
+                            Los reembolsos no son automáticos.
+                        </p>
+
+                        <form action="<?= site_url(
+                            'pedidos/' . $pedido['id'] . '/solicitar-cancelacion'
+                        ) ?>" method="post">
+
+                            <?= csrf_field() ?>
+
+                            <div class="mb-3">
+                                <label class="form-label">
+                                    Motivo de cancelación
+                                </label>
+
+                                <textarea
+                                    name="motivo"
+                                    class="form-control"
+                                    rows="3"
+                                    minlength="10"
+                                    maxlength="2000"
+                                    required></textarea>
+                            </div>
+
+                            <button type="submit" class="btn btn-outline-danger">
+                                Enviar solicitud de cancelación
+                            </button>
+
+                        </form>
+
+                    <?php endif; ?>
+
+                    <?php if (
+                        in_array(
+                            $pedido['estado'],
+                            [
+                                'PENDIENTE_ANTICIPO',
+                                'CONFIRMADO',
+                                'EN_PREPARACION',
+                            ],
+                            true
+                        )
+                    ): ?>
+
+                        <hr>
+
                         <h4 class="h6">Registrar pago</h4>
 
                         <p class="text-muted small">

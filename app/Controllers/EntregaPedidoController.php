@@ -22,7 +22,10 @@ class EntregaPedidoController extends BaseController
 
         $pedidos = $db->table('pedidos')
             ->select('pedidos.id, pedidos.total, pedidos.estado, pedidos.created_at')
-            ->where('pedidos.estado', 'CONFIRMADO')
+            ->whereIn('pedidos.estado', [
+                'CONFIRMADO',
+                'EN_PREPARACION',
+            ])
             ->orderBy('pedidos.created_at', 'ASC')
             ->get()
             ->getResultArray();
@@ -63,9 +66,9 @@ class EntregaPedidoController extends BaseController
                 [$pedidoId]
             )->getRowArray();
 
-            if (! $pedido || $pedido['estado'] !== 'CONFIRMADO') {
+            if (! $pedido || $pedido['estado'] !== 'EN_PREPARACION') {
                 throw new \RuntimeException(
-                    'El pedido no existe o no está confirmado.'
+                    'El pedido no existe o no está en preparación.'
                 );
             }
 
@@ -216,7 +219,7 @@ class EntregaPedidoController extends BaseController
             // Marcar el pedido como entregado.
             $db->table('pedidos')
                 ->where('id', $pedidoId)
-                ->where('estado', 'CONFIRMADO')
+                ->where('estado', 'EN_PREPARACION')
                 ->update([
                     'estado' => 'ENTREGADO',
                     'updated_at' => $ahora,

@@ -32,10 +32,31 @@
                     Has ingresado al panel de
                     <strong><?= esc($rol) ?></strong>.
                 </p>
+            
+                <?php if ((int) session('rol_id') === 4): ?>
 
-                <div class="alert alert-success">
-                    Tu rol tiene autorización para acceder a esta página.
-                </div>
+                    <h3 class="h5 mt-4 mb-3">Mis compras</h3>
+
+                    <div class="d-flex flex-wrap gap-2 mb-4">
+
+                        <a href="<?= site_url('catalogo') ?>"
+                        class="btn btn-primary">
+                            Ver catálogo
+                        </a>
+
+                        <a href="<?= site_url('carrito') ?>"
+                        class="btn btn-outline-primary">
+                            Mi carrito
+                        </a>
+
+                        <a href="<?= site_url('mis-pedidos') ?>"
+                        class="btn btn-outline-primary">
+                            Mis pedidos
+                        </a>
+
+                    </div>
+
+                <?php endif; ?>
 
                 <form action="<?= site_url('logout') ?>" method="post">
                     <?= csrf_field() ?>

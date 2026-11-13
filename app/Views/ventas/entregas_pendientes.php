@@ -72,17 +72,35 @@
                                 <?= esc($pedido['created_at']) ?>
                             </td>
                             <td>
-                                <form
-                                    action="<?= site_url('entregas/' . (int) $pedido['id'] . '/registrar') ?>"
-                                    method="post"
-                                    onsubmit="return confirm('¿Confirmas que el pedido #<?= (int) $pedido['id'] ?> fue entregado al cliente? Esta acción descontará el inventario.');"
-                                >
-                                    <?= csrf_field() ?>
+                                <?php if ($pedido['estado'] === 'CONFIRMADO'): ?>
 
-                                    <button type="submit" class="btn btn-success btn-sm">
-                                        Registrar entrega
-                                    </button>
-                                </form>
+                                    <form
+                                        action="<?= site_url('pedidos/' . (int) $pedido['id'] . '/iniciar-preparacion') ?>"
+                                        method="post"
+                                        onsubmit="return confirm('¿Deseas iniciar la preparación de este pedido?');"
+                                    >
+                                        <?= csrf_field() ?>
+
+                                        <button type="submit" class="btn btn-primary btn-sm">
+                                            Iniciar preparación
+                                        </button>
+                                    </form>
+
+                                <?php elseif ($pedido['estado'] === 'EN_PREPARACION'): ?>
+
+                                    <form
+                                        action="<?= site_url('entregas/' . (int) $pedido['id'] . '/registrar') ?>"
+                                        method="post"
+                                        onsubmit="return confirm('¿Confirmas que este pedido fue entregado al cliente?');"
+                                    >
+                                        <?= csrf_field() ?>
+
+                                        <button type="submit" class="btn btn-success btn-sm">
+                                            Registrar entrega
+                                        </button>
+                                    </form>
+
+                                <?php endif; ?>
                             </td>
                         </tr>
                     <?php endforeach; ?>
