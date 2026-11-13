@@ -107,13 +107,43 @@
 
 <main class="container py-5">
 
+    <?php
+    $rolId = (int) session()->get('rol_id');
+
+    $paneles = [
+        1 => [
+            'titulo' => 'Panel de Administración',
+            'descripcion' => 'Administra tu tienda desde un solo lugar.',
+        ],
+        2 => [
+            'titulo' => 'Panel de Ventas',
+            'descripcion' => 'Gestiona pedidos, pagos y entregas.',
+        ],
+        3 => [
+            'titulo' => 'Panel de Taller',
+            'descripcion' => 'Gestiona las solicitudes y reparaciones de muebles.',
+        ],
+        4 => [
+            'titulo' => 'Panel del Cliente',
+            'descripcion' => 'Consulta tus compras y solicita reparaciones.',
+        ],
+    ];
+
+    $panelActual = $paneles[$rolId] ?? [
+        'titulo' => 'Panel de control',
+        'descripcion' => 'Bienvenido a Mueblería Imperial.',
+    ];
+    ?>
+
     <div class="mb-4">
-        <h1 class="page-title">Panel de administración</h1>
+        <h1 class="page-title">
+            <?= esc($panelActual['titulo']) ?>
+        </h1>
 
         <p class="text-secondary">
             Bienvenido,
             <strong><?= esc(session()->get('nombre')) ?></strong>.
-            Administra tu tienda desde un solo lugar.
+            <?= esc($panelActual['descripcion']) ?>
         </p>
     </div>
 
@@ -158,6 +188,54 @@
 
                 </section>
             </div>
+        <?php endif; ?>
+
+        <?php if ((int) session()->get('rol_id') === 4): ?>
+
+            <div class="col-md-6">
+                <section class="dashboard-card">
+
+                    <div class="fs-1 mb-3">
+                        <i class="bi bi-tools"></i>
+                    </div>
+
+                    <h2>Solicitar reparación</h2>
+
+                    <p>
+                        Solicita la evaluación gratuita de tus muebles,
+                        aunque no los hayas comprado en nuestra tienda.
+                    </p>
+
+                    <a href="<?= site_url('reparaciones/nueva') ?>"
+                    class="btn btn-imperial">
+                        Nueva reparación
+                    </a>
+
+                </section>
+            </div>
+
+            <div class="col-md-6">
+                <section class="dashboard-card">
+
+                    <div class="fs-1 mb-3">
+                        <i class="bi bi-clipboard-check"></i>
+                    </div>
+
+                    <h2>Mis reparaciones</h2>
+
+                    <p>
+                        Consulta tus solicitudes, presupuestos
+                        y el estado de tus reparaciones.
+                    </p>
+
+                    <a href="<?= site_url('mis-reparaciones') ?>"
+                    class="btn btn-outline-imperial">
+                        Ver mis reparaciones
+                    </a>
+
+                </section>
+            </div>
+
         <?php endif; ?>
 
         <?php if ((int) session()->get('rol_id') === 1): ?>
@@ -213,10 +291,60 @@
                         y aprueba o rechaza sus pagos.
                     </p>
 
-                    
+
                     <a href="<?= site_url('pagos/pendientes') ?>"
                     class="btn btn-imperial">
                         Revisar pagos pendientes
+                    </a>
+
+                </section>
+            </div>
+
+        <?php endif; ?>
+
+        <?php if (in_array((int) session()->get('rol_id'), [1, 2], true)): ?>
+
+            <div class="col-md-6">
+                <section class="dashboard-card">
+
+                    <div class="fs-1 mb-3">🧾</div>
+
+                    <h2>Pagos de reparaciones</h2>
+
+                    <p>
+                        Consulta los anticipos de reparaciones
+                        reportados por los clientes y verifica
+                        sus pagos pendientes.
+                    </p>
+
+                    <a href="<?= site_url('reparaciones/pagos/pendientes') ?>"
+                    class="btn btn-imperial">
+                        Revisar pagos de reparaciones
+                    </a>
+
+                </section>
+            </div>
+
+        <?php endif; ?>
+
+        <?php if (in_array((int) session()->get('rol_id'), [1, 3], true)): ?>
+
+            <div class="col-md-6">
+                <section class="dashboard-card">
+
+                    <div class="fs-1 mb-3">🔧</div>
+
+                    <h2>Gestión de reparaciones</h2>
+
+                    <p>
+                        Consulta las solicitudes de los clientes,
+                        realiza evaluaciones y gestiona
+                        los presupuestos de reparación.
+                    </p>
+
+                    <a href="<?= site_url('taller/reparaciones') ?>"
+                    class="btn btn-imperial">
+                        Gestionar reparaciones
                     </a>
 
                 </section>
@@ -234,4 +362,3 @@
 
 </body>
 </html>
-

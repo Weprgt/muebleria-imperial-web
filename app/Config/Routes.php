@@ -55,40 +55,40 @@ $routes->post('admin/muebles/guardar', 'AdminMueblesController::guardar', [
 $routes->get('admin/muebles/editar/(:num)', 'AdminMueblesController::editar/$1', [
     'filter' => 'role:1']);
 
-$routes->post('admin/muebles/actualizar/(:num)', 
+$routes->post('admin/muebles/actualizar/(:num)',
     'AdminMueblesController::actualizar/$1', [
     'filter' => 'role:1']);
 
-$routes->post('admin/muebles/cambiar-estado/(:num)', 
+$routes->post('admin/muebles/cambiar-estado/(:num)',
     'AdminMueblesController::cambiarEstado/$1', [
     'filter' => 'role:1']);
 
 // Administración de categorías
-$routes->get('admin/categorias', 
+$routes->get('admin/categorias',
     'AdminCategoriasController::index', [
     'filter' => 'role:1']);
 
-$routes->get('admin/categorias/agregar', 
+$routes->get('admin/categorias/agregar',
     'AdminCategoriasController::agregar', [
     'filter' => 'role:1']);
 
-$routes->post('admin/categorias/guardar', 
+$routes->post('admin/categorias/guardar',
     'AdminCategoriasController::guardar', [
     'filter' => 'role:1']);
 
-$routes->get('admin/categorias/editar/(:num)', 
+$routes->get('admin/categorias/editar/(:num)',
     'AdminCategoriasController::editar/$1', [
     'filter' => 'role:1']);
 
-$routes->post('admin/categorias/actualizar/(:num)', 
+$routes->post('admin/categorias/actualizar/(:num)',
     'AdminCategoriasController::actualizar/$1', [
     'filter' => 'role:1']);
 
-$routes->post('admin/categorias/desactivar/(:num)', 
+$routes->post('admin/categorias/desactivar/(:num)',
     'AdminCategoriasController::desactivar/$1', [
     'filter' => 'role:1']);
 
-$routes->post('admin/categorias/reactivar/(:num)', 
+$routes->post('admin/categorias/reactivar/(:num)',
     'AdminCategoriasController::reactivar/$1', [
     'filter' => 'role:1']);
 
@@ -204,4 +204,113 @@ $routes->post(
     'gestion-reembolsos/(:num)/rechazar',
     'ReembolsoPedidoController::rechazar/$1',
     ['filter' => 'role:1,2']
+);
+
+
+// =============================================
+// MODULO DE TALLER - REPARACIONES
+// =============================================
+
+// Formulario para solicitar una reparación.
+$routes->get(
+    'reparaciones/nueva',
+    'ReparacionController::nueva',
+    ['filter' => 'role:4']
+);
+
+// Registrar una solicitud de reparación.
+$routes->post(
+    'reparaciones/guardar',
+    'ReparacionController::guardar',
+    ['filter' => 'role:4']
+);
+
+// Consultar las reparaciones del cliente.
+$routes->get(
+    'mis-reparaciones',
+    'ReparacionController::misReparaciones',
+    ['filter' => 'role:4']
+);
+
+$routes->post(
+    'reparaciones/([0-9]+)/aceptar-presupuesto',
+    'ReparacionController::aceptarPresupuesto/$1',
+    ['filter' => 'role:4']
+);
+
+$routes->get('taller/reparaciones',
+    'GestionReparacionesController::index',
+    ['filter' => 'role:1,3']
+);
+
+$routes->post(
+    'taller/reparaciones/([0-9]+)/iniciar-evaluacion',
+    'GestionReparacionesController::iniciarEvaluacion/$1',
+    ['filter' => 'role:1,3']
+);
+
+$routes->get(
+    'taller/reparaciones/([0-9]+)/presupuestar',
+    'GestionReparacionesController::presupuestar/$1',
+    ['filter' => 'role:1,3']
+);
+
+$routes->post(
+    'taller/reparaciones/([0-9]+)/guardar-presupuesto',
+    'GestionReparacionesController::guardarPresupuesto/$1',
+    ['filter' => 'role:1,3']
+);
+
+$routes->post(
+    'reparaciones/([0-9]+)/registrar-anticipo',
+    'PagoReparacionController::registrar/$1',
+    ['filter' => 'role:4']
+);
+
+// Consultar pagos pendientes de reparaciones: Administrador y Ventas
+$routes->get(
+    'reparaciones/pagos/pendientes',
+    'VerificacionPagosReparacionController::index',
+    ['filter' => 'role:1,2']
+);
+
+// Aprobar pagos de reparaciones: Administrador y Ventas
+$routes->post(
+    'reparaciones/pagos/(:num)/aprobar',
+    'VerificacionPagosReparacionController::aprobar/$1',
+    ['filter' => 'role:1,2']
+);
+
+// Rechazar pagos de reparaciones: Administrador y Ventas
+$routes->post(
+    'reparaciones/pagos/(:num)/rechazar',
+    'VerificacionPagosReparacionController::rechazar/$1',
+    ['filter' => 'role:1,2']
+);
+
+// Cliente: registrar el pago del saldo restante de una reparación
+$routes->post(
+    'reparaciones/(:num)/pagar-saldo',
+    'PagoReparacionController::registrarSaldo/$1',
+    ['filter' => 'role:4']
+);
+
+// Iniciar trabajos de reparación: Administrador y Taller
+$routes->post(
+    'taller/reparaciones/(:num)/iniciar-reparacion',
+    'GestionReparacionesController::iniciarReparacion/$1',
+    ['filter' => 'role:1,3']
+);
+
+// Finalizar trabajos de reparación: Administrador y Taller
+$routes->post(
+    'taller/reparaciones/(:num)/finalizar-reparacion',
+    'GestionReparacionesController::finalizarReparacion/$1',
+    ['filter' => 'role:1,3']
+);
+
+$routes->post(
+    'taller/reparaciones/(:num)/entregar',
+    'GestionReparacionesController::entregarReparacion/$1',
+    ['filter' => 'role:1,3']
 );

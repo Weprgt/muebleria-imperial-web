@@ -32,7 +32,7 @@
                     Has ingresado al panel de
                     <strong><?= esc($rol) ?></strong>.
                 </p>
-            
+
                 <?php if ((int) session('rol_id') === 4): ?>
 
                     <h3 class="h5 mt-4 mb-3">Mis compras</h3>
@@ -55,6 +55,22 @@
                         </a>
 
                     </div>
+
+                        <h3 class="h5 mt-4 mb-3">Mis reparaciones</h3>
+
+                        <div class="d-flex flex-wrap gap-2 mb-4">
+
+                            <a href="<?= site_url('reparaciones/nueva') ?>"
+                            class="btn btn-success">
+                                Solicitar reparación
+                            </a>
+
+                            <a href="<?= site_url('mis-reparaciones') ?>"
+                            class="btn btn-outline-success">
+                                Mis reparaciones
+                            </a>
+
+                        </div>
 
                 <?php endif; ?>
 
