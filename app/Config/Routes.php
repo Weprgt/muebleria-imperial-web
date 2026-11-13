@@ -314,3 +314,10 @@ $routes->post(
     'GestionReparacionesController::entregarReparacion/$1',
     ['filter' => 'role:1,3']
 );
+
+// Consultar reportes: Administrador y Ventas
+$routes->get(
+    'reportes',
+    'ReportesController::index',
+    ['filter' => 'role:1,2']
+);

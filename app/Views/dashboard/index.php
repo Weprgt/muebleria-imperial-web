@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -147,7 +147,110 @@
         </p>
     </div>
 
+    <?php if (in_array($rolId, [1, 2], true)): ?>
+
+        <section class="mb-5">
+            <h2 class="h4 page-title mb-3">
+                Resumen del negocio
+            </h2>
+
+            <div class="row g-3">
+
+                <div class="col-md-4">
+                    <div class="dashboard-card">
+                        <h2>Pedidos registrados</h2>
+                        <p class="fs-2 fw-bold mb-0">
+                            <?= number_format($totalPedidos ?? 0) ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="dashboard-card">
+                        <h2>Pedidos entregados</h2>
+                        <p class="fs-2 fw-bold mb-0">
+                            <?= number_format($pedidosEntregados ?? 0) ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="dashboard-card">
+                        <h2>Ventas entregadas</h2>
+                        <p class="fs-2 fw-bold mb-0">
+                            Q<?= number_format($ventasEntregadas ?? 0, 2) ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="dashboard-card">
+                        <h2>Pagos pendientes</h2>
+                        <p class="fs-2 fw-bold mb-0">
+                            <?= number_format($pagosPendientes ?? 0) ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="dashboard-card">
+                        <h2>Productos activos</h2>
+                        <p class="fs-2 fw-bold mb-0">
+                            <?= number_format($productosActivos ?? 0) ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="dashboard-card">
+                        <h2>Unidades disponibles</h2>
+                        <p class="fs-2 fw-bold mb-0">
+                            <?= number_format($unidadesDisponibles ?? 0) ?>
+                        </p>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="dashboard-card">
+                        <h2>Reparaciones activas</h2>
+                        <p class="fs-2 fw-bold mb-0">
+                            <?= number_format($reparacionesActivas ?? 0) ?>
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+        
+        
+        
+        
+                        
+    <?php endif; ?>
+
     <div class="row g-4">
+
+    <?php if (in_array($rolId, [1, 2], true)): ?>
+        <div class="col-md-6">
+            <section class="dashboard-card">
+
+                <div class="fs-1 mb-3">📊</div>
+
+                <h2>Reportes administrativos</h2>
+
+                <p>
+                    Consulta los reportes de pedidos,
+                    inventario y reparaciones de la tienda.
+                </p>
+
+                <a href="<?= site_url('reportes') ?>"
+                class="btn btn-imperial">
+                    Ver reportes
+                </a>
+
+            </section>
+        </div>
+    <?php endif; ?>
 
         <div class="col-md-6">
             <section class="dashboard-card">
@@ -238,26 +341,6 @@
 
         <?php endif; ?>
 
-        <?php if ((int) session()->get('rol_id') === 1): ?>
-            <div class="col-md-6">
-                <section class="dashboard-card">
-
-                    <div class="fs-1 mb-3">⚙️</div>
-
-                    <h2>Administración</h2>
-
-                    <p>
-                        Accede a las herramientas de gestión de la tienda.
-                    </p>
-
-                    <a href="<?= site_url('admin') ?>"
-                       class="btn btn-outline-imperial">
-                        Ir a administración
-                    </a>
-
-                </section>
-            </div>
-        <?php endif; ?>
     <?php if (in_array((int) session()->get('rol_id'), [1, 2], true)): ?>
         <div class="col-md-6">
             <section class="dashboard-card">
@@ -348,6 +431,9 @@
                     </a>
 
                 </section>
+
+    
+
             </div>
 
         <?php endif; ?>
@@ -362,3 +448,4 @@
 
 </body>
 </html>
+
