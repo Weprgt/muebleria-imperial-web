@@ -1,10 +1,111 @@
-body {
-    font-family: Arial, sans-serif;
-    background-color: #f5f1eb;
-    color: #333333;
-    margin: 40px;
+/* ==========================================
+   MUEBLERÍA IMPERIAL
+   Identidad visual de la tienda
+   ========================================== */
+
+:root {
+    --imperial-cafe: #493024;
+    --imperial-dorado: #b68a45;
+    --imperial-crema: #f8f5ef;
+    --imperial-blanco: #ffffff;
+    --imperial-texto: #352b25;
 }
 
-h1 {
-    color: #654321;
+/* Estilos generales */
+
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: var(--imperial-crema);
+    color: var(--imperial-texto);
+}
+
+/* Encabezado */
+
+.imperial-header {
+    background-color: var(--imperial-blanco);
+    border-bottom: 1px solid #e9dfd0;
+    box-shadow: 0 3px 15px rgba(73, 48, 36, 0.06);
+}
+
+.imperial-header .navbar {
+    padding: 12px 0;
+}
+
+/* Logotipo */
+
+.imperial-logo {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+}
+
+.imperial-brand-name {
+    margin-left: 12px;
+    color: var(--imperial-cafe);
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+    font-weight: bold;
+    letter-spacing: 0.3px;
+}
+
+/* Navegación */
+
+.imperial-header .nav-link {
+    color: var(--imperial-cafe);
+    font-weight: 500;
+    padding: 10px 16px !important;
+    transition: color 0.2s ease;
+}
+
+.imperial-header .nav-link:hover,
+.imperial-header .nav-link.active {
+    color: var(--imperial-dorado);
+}
+
+/* Botón de acceso */
+
+.imperial-btn-login {
+    background-color: var(--imperial-cafe);
+    color: var(--imperial-blanco);
+    border: 1px solid var(--imperial-cafe);
+    border-radius: 6px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.imperial-btn-login:hover {
+    background-color: var(--imperial-dorado);
+    border-color: var(--imperial-dorado);
+    color: var(--imperial-blanco);
+}
+
+/* Títulos */
+
+h1, h2, h3 {
+    color: var(--imperial-cafe);
+    font-family: Georgia, "Times New Roman", serif;
+}
+
+/* Adaptación a dispositivos móviles */
+
+@media (max-width: 767px) {
+    .imperial-logo {
+        width: 55px;
+        height: 55px;
+    }
+
+    .imperial-brand-name {
+        font-size: 1rem;
+        margin-left: 8px;
+    }
+
+    .imperial-header .navbar {
+        padding: 8px 0;
+    }
+
+    .imperial-header .navbar-collapse {
+        padding-top: 12px;
+    }
 }
