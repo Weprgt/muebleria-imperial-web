@@ -229,9 +229,35 @@ class GestionCancelacionesController extends BaseController
                 );
             }
 
-            if (!$db->transCommit()) {
+            // Confirmar los cambios en MySQL antes de auditar.
+            $db->transCommit();
+
+            if ($db->transStatus() === false) {
                 throw new \RuntimeException(
                     'No se pudo confirmar la transacción.'
+                );
+            }
+
+            // Registrar la aprobación en MongoDB.
+            try {
+                $auditoria = new \App\Services\AuditoriaMongoService();
+
+                $auditoria->registrar(
+                    'PEDIDOS',
+                    'CANCELACION_APROBADA',
+                    [
+                        'solicitud_id'    => $solicitudId,
+                        'pedido_id'       => $pedidoId,
+                        'estado_anterior' => 'EN_PREPARACION',
+                        'estado_nuevo'    => 'CANCELADO',
+                        'usuario_id'      => $usuarioId,
+                    ]
+                );
+            } catch (\Throwable $e) {
+                log_message(
+                    'error',
+                    'Error de auditoría al aprobar cancelación #'
+                    . $solicitudId . ': ' . $e->getMessage()
                 );
             }
 
@@ -343,9 +369,34 @@ class GestionCancelacionesController extends BaseController
                 );
             }
 
-            if (!$db->transCommit()) {
+            // Confirmar los cambios en MySQL antes de auditar.
+            if ($db->transStatus() === false || $db->transCommit() === false) {
                 throw new \RuntimeException(
                     'No se pudo confirmar la transacción.'
+                );
+            }
+
+            // Registrar el rechazo después de confirmar MySQL.
+            try {
+                $auditoria = new \App\Services\AuditoriaMongoService();
+
+                $auditoria->registrar(
+                    'PEDIDOS',
+                    'CANCELACION_RECHAZADA',
+                    [
+                        'solicitud_id'    => $solicitudId,
+                        'pedido_id'       => (int) $pedido['id'],
+                        'estado_anterior' => 'PENDIENTE',
+                        'estado_nuevo'    => 'RECHAZADA',
+                        'estado_pedido'   => 'EN_PREPARACION',
+                        'usuario_id'      => $usuarioId,
+                    ]
+                );
+            } catch (\Throwable $e) {
+                log_message(
+                    'error',
+                    'Error de auditoría al rechazar cancelación #'
+                    . $solicitudId . ': ' . $e->getMessage()
                 );
             }
 

@@ -192,6 +192,30 @@ class CancelacionPedidoController extends BaseController
                 );
             }
 
+            // Auditar la cancelación después de confirmar MySQL.
+            try {
+                $auditoria = new \App\Services\AuditoriaMongoService();
+
+                $auditoria->registrar(
+                    'PEDIDOS',
+                    'PEDIDO_CANCELADO',
+                    [
+                        'pedido_id'       => $pedidoId,
+                        'estado_anterior' => $pedido['estado'],
+                        'estado_nuevo'    => 'CANCELADO',
+                        'tipo'            => 'CANCELACION_DIRECTA',
+                        'usuario_id'      => $usuarioId,
+                        'motivo'          => $motivo,
+                    ]
+                );
+            } catch (\Throwable $e) {
+                log_message(
+                    'error',
+                    'Error de auditoría al cancelar pedido #'
+                    . $pedidoId . ': ' . $e->getMessage()
+                );
+            }
+
             return redirect()->to(site_url('mis-pedidos'))
                 ->with(
                     'success',

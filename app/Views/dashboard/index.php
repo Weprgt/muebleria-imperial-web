@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -221,14 +221,37 @@
 
             </div>
         </section>
-        
-        
-        
-        
-                        
+
+
+
+
+
     <?php endif; ?>
 
     <div class="row g-4">
+
+    <?php if ($rolId === 1): ?>
+        <div class="col-md-6">
+            <section class="dashboard-card">
+
+                <div class="fs-1 mb-3">🪑</div>
+
+                <h2>Administración de muebles</h2>
+
+                <p>
+                    Registra nuevos muebles, modifica precios,
+                    administra existencias y activa o desactiva
+                    productos del catálogo.
+                </p>
+
+                <a href="<?= site_url('admin/muebles') ?>"
+                class="btn btn-imperial">
+                    Administrar muebles
+                </a>
+
+            </section>
+        </div>
+    <?php endif; ?>
 
     <?php if (in_array($rolId, [1, 2], true)): ?>
         <div class="col-md-6">
@@ -341,6 +364,29 @@
 
         <?php endif; ?>
 
+        <?php if (in_array($rolId, [1, 2], true)): ?>
+            <div class="col-md-6">
+                <section class="dashboard-card">
+
+                    <div class="fs-1 mb-3">📋</div>
+
+                    <h2>Gestión de cancelaciones</h2>
+
+                    <p>
+                        Revisa las solicitudes de cancelación
+                        de pedidos en preparación y decide
+                        si deben aprobarse o rechazarse.
+                    </p>
+
+                    <a href="<?= site_url('gestion-cancelaciones') ?>"
+                       class="btn btn-imperial">
+                        Revisar cancelaciones
+                    </a>
+
+                </section>
+            </div>
+        <?php endif; ?>
+
     <?php if (in_array((int) session()->get('rol_id'), [1, 2], true)): ?>
         <div class="col-md-6">
             <section class="dashboard-card">
@@ -432,7 +478,7 @@
 
                 </section>
 
-    
+
 
             </div>
 

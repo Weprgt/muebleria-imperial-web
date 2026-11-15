@@ -26,10 +26,19 @@
 
     <h2 class="mb-0">Inventario de muebles</h2>
 
-        <a href="<?= site_url('admin/muebles/agregar') ?>"
+        <div class="d-flex gap-2 flex-wrap">
+
+            <a href="<?= site_url('dashboard') ?>"
+            class="btn btn-outline-secondary">
+                &larr; Volver al dashboard
+            </a>
+
+            <a href="<?= site_url('admin/muebles/agregar') ?>"
             class="btn btn-success">
-            + Nuevo mueble
-        </a>
+                + Nuevo mueble
+            </a>
+
+        </div>
 
     </div>
 

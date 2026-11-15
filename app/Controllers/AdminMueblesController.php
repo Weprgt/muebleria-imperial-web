@@ -145,10 +145,27 @@ class AdminMueblesController extends BaseController
                 ]);
         }
 
-        // 6. Regresar al listado.
+        // 6. Registrar auditoría en MongoDB.
+        $auditoria = new \App\Services\AuditoriaMongoService();
+
+        $auditoria->registrar(
+            'MUEBLES',
+            'MUEBLE_CREADO',
+            [
+                'mueble_id' => (int) $muebleModel->getInsertID(),
+                'nombre' => $mueble['nombre'],
+                'categoria_id' => (int) $mueble['categoria_id'],
+                'precio' => (float) $mueble['precio'],
+                'stock' => (int) $mueble['stock'],
+                'usuario_id' => session()->get('usuario_id'),
+            ]
+        );
+
+        // 7. Regresar al listado.
         return redirect()
             ->to(site_url('admin/muebles'))
             ->with('success', 'Mueble registrado correctamente.');
+
     }
 
     public function editar($id)
@@ -279,6 +296,30 @@ class AdminMueblesController extends BaseController
                 ]);
         }
 
+        // Registrar la actualización en MongoDB.
+        $auditoria = new \App\Services\AuditoriaMongoService();
+
+        $auditoria->registrar(
+            'MUEBLES',
+            'MUEBLE_ACTUALIZADO',
+            [
+                'mueble_id' => (int) $id,
+                'usuario_id' => session()->get('usuario_id'),
+                'datos_anteriores' => [
+                    'categoria_id' => (int) $mueble['categoria_id'],
+                    'nombre' => $mueble['nombre'],
+                    'precio' => (float) $mueble['precio'],
+                    'stock' => (int) $mueble['stock'],
+                ],
+                'datos_nuevos' => [
+                    'categoria_id' => (int) $datosActualizados['categoria_id'],
+                    'nombre' => $datosActualizados['nombre'],
+                    'precio' => (float) $datosActualizados['precio'],
+                    'stock' => (int) $datosActualizados['stock'],
+                ],
+            ]
+        );
+
         return redirect()->to(site_url('admin/muebles'))
             ->with('success', 'Mueble actualizado correctamente.');
     }
@@ -307,6 +348,23 @@ class AdminMueblesController extends BaseController
                     'general' => 'No se pudo cambiar el estado del mueble.'
                 ]);
         }
+
+        // Registrar el cambio de estado en MongoDB.
+        $auditoria = new \App\Services\AuditoriaMongoService();
+
+        $auditoria->registrar(
+            'MUEBLES',
+            $nuevoEstado === 1
+                ? 'MUEBLE_ACTIVADO'
+                : 'MUEBLE_DESACTIVADO',
+            [
+                'mueble_id' => (int) $id,
+                'nombre' => $mueble['nombre'],
+                'estado_anterior' => (int) $mueble['activo'],
+                'estado_nuevo' => $nuevoEstado,
+                'usuario_id' => session()->get('usuario_id'),
+            ]
+        );
 
         $mensaje = $nuevoEstado === 1
             ? 'Mueble activado correctamente.'

@@ -71,6 +71,29 @@ class PreparacionPedidoController extends BaseController
                 );
             }
 
+            // 7. Registrar el cambio de estado en MongoDB.
+            // La auditoría no debe impedir la preparación del pedido.
+            try {
+                $auditoria = new \App\Services\AuditoriaMongoService();
+
+                $auditoria->registrar(
+                    'PEDIDOS',
+                    'PEDIDO_EN_PREPARACION',
+                    [
+                        'pedido_id'       => $pedidoId,
+                        'estado_anterior' => 'CONFIRMADO',
+                        'estado_nuevo'    => 'EN_PREPARACION',
+                        'usuario_id'      => session()->get('usuario_id'),
+                    ]
+                );
+            } catch (Throwable $e) {
+                log_message(
+                    'error',
+                    'Error de auditoría al preparar pedido #'
+                    . $pedidoId . ': ' . $e->getMessage()
+                );
+            }
+
             return redirect()->to(site_url('entregas/pendientes'))
                 ->with(
                     'success',

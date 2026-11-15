@@ -237,6 +237,32 @@ class EntregaPedidoController extends BaseController
                 );
             }
 
+            // Registrar la entrega en MongoDB después del commit.
+            // Un fallo de auditoría no debe revertir la entrega.
+
+            try {
+                $auditoria = new \App\Services\AuditoriaMongoService();
+
+                $auditoria->registrar(
+                    'PEDIDOS',
+                    'PEDIDO_ENTREGADO',
+                    [
+                        'pedido_id'       => $pedidoId,
+                        'estado_anterior' => 'EN_PREPARACION',
+                        'estado_nuevo'    => 'ENTREGADO',
+                        'entregado_por'   => $usuarioId,
+                        'total'           => $pedido['total'],
+                    ]
+                );
+
+            } catch (\Throwable $e) {
+                log_message(
+                    'error',
+                    'Error de auditoría al entregar pedido #'
+                    . $pedidoId . ': ' . $e->getMessage()
+                );
+            }
+
             return redirect()->to('entregas/pendientes')
                 ->with('success', 'Pedido #' . $pedidoId . ' entregado correctamente.');
 
