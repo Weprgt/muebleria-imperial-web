@@ -321,3 +321,7 @@ $routes->get(
     'ReportesController::index',
     ['filter' => 'role:1,2']
 );
+
+$routes->get('api/muebles', 'Api\MueblesController::index');
+$routes->get('api/muebles/(:num)', 'Api\MueblesController::show/$1');
+$routes->get('api/categorias', 'Api\CategoriasController::index');

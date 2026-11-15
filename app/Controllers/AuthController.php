@@ -77,7 +77,24 @@ class AuthController extends BaseController
             'logueado'   => true,
         ]);
 
-        return redirect()->to('/dashboard');
+        $rutasPorRol = [
+            1 => 'admin',
+            2 => 'ventas',
+            3 => 'taller',
+            4 => 'cliente',
+        ];
+
+        $rolId = (int) $usuario['rol_id'];
+
+        if (! isset($rutasPorRol[$rolId])) {
+            session()->destroy();
+
+            return redirect()
+                ->to(site_url('login'))
+                ->with('error', 'El usuario no tiene un rol válido.');
+        }
+
+        return redirect()->to(site_url($rutasPorRol[$rolId]));
     }
 
     public function logout()
