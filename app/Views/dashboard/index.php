@@ -82,6 +82,158 @@
             background: #795b3b;
             color: #ffffff;
         }
+
+        .dashboard-audit-card {
+            height: auto;
+            padding: 24px;
+        }
+
+        .dashboard-audit-heading {
+            margin-bottom: 12px;
+        }
+
+        .dashboard-audit-heading h2 {
+            margin-bottom: 6px;
+        }
+
+        .dashboard-audit-heading p {
+            margin-bottom: 0;
+        }
+
+        .dashboard-audit-list {
+            margin-top: 16px;
+        }
+
+        .dashboard-audit-item {
+            padding: 14px 0 14px 14px;
+            border-bottom: 1px solid #eee8e0;
+            border-left: 3px solid #b68a45;
+        }
+
+        .dashboard-audit-item:last-child {
+            border-bottom: 0;
+        }
+
+        .dashboard-audit-item--success {
+            border-left-color: #3c7851;
+        }
+
+        .dashboard-audit-item--danger {
+            border-left-color: #a6443b;
+        }
+
+        .dashboard-audit-item__header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+
+        .dashboard-audit-module {
+            color: #493024;
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .dashboard-audit-date {
+            color: #786d62;
+            font-size: 0.8rem;
+        }
+
+        .dashboard-audit-action {
+            display: inline-flex;
+            align-items: center;
+            padding: 4px 9px;
+            border-radius: 999px;
+            background: #f3efe9;
+            color: #695442;
+            font-size: 0.86rem;
+            font-weight: 600;
+        }
+
+        .dashboard-audit-action--success {
+            background: #eaf3eb;
+            color: #28633c;
+        }
+
+        .dashboard-audit-action--danger {
+            background: #f9ecea;
+            color: #8a312c;
+        }
+
+        .dashboard-audit-details {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px 18px;
+            margin-top: 9px;
+            color: #665b50;
+            font-size: 0.86rem;
+            overflow-wrap: anywhere;
+        }
+
+        .dashboard-audit-notice {
+            margin: 16px 0 0;
+            padding: 14px 16px;
+            border: 1px solid #e9e2d9;
+            border-radius: 8px;
+            background: #f8f6f2;
+            color: #665b50;
+        }
+
+        .dashboard-audit-notice--unavailable {
+            border-color: #ead2cc;
+            background: #fbf0ed;
+            color: #743d34;
+        }
+
+        .dashboard-audit-pagination {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-top: 18px;
+            padding-top: 16px;
+            border-top: 1px solid #eee8e0;
+        }
+
+        .dashboard-audit-pagination .btn {
+            min-width: 104px;
+        }
+
+        .dashboard-audit-pagination .disabled {
+            opacity: 0.5;
+        }
+
+        .dashboard-audit-pagination__label {
+            color: #493024;
+            font-size: 0.9rem;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        @media (max-width: 575.98px) {
+            .dashboard-audit-card {
+                padding: 18px;
+            }
+
+            .dashboard-audit-item__header {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .dashboard-audit-pagination {
+                flex-wrap: wrap;
+            }
+
+            .dashboard-audit-pagination__label {
+                order: -1;
+                width: 100%;
+            }
+        }
     </style>
 </head>
 
@@ -480,6 +632,196 @@
 
 
 
+            </div>
+
+        <?php endif; ?>
+        <?php if ((int) session()->get('rol_id') === 1): ?>
+            <div class="col-12">
+                <section class="dashboard-card dashboard-audit-card"
+                         aria-labelledby="audit-heading">
+                    <div class="dashboard-audit-heading">
+                        <h2 id="audit-heading">Actividad reciente del sistema</h2>
+                        <p>Últimos eventos registrados en MongoDB.</p>
+                    </div>
+
+                    <?php if (empty($auditoriaDisponible)): ?>
+                        <p class="dashboard-audit-notice dashboard-audit-notice--unavailable"
+                           role="status">
+                            La actividad de auditoría no está disponible en este momento.
+                        </p>
+                    <?php elseif (empty($actividadReciente)): ?>
+                        <p class="dashboard-audit-notice" role="status">
+                            No hay eventos de auditoría disponibles.
+                        </p>
+                    <?php else: ?>
+                        <div class="dashboard-audit-list">
+                            <?php foreach ($actividadReciente as $evento): ?>
+                                <?php
+                                $detalles = $evento['datos'] ?? [];
+                                $pedidoId = (int) ($detalles['pedido_id'] ?? 0);
+                                $nombreCliente = $clientesAuditoria[$pedidoId] ?? null;
+                                $mueblesPedido = $mueblesAuditoria[$pedidoId] ?? [];
+                                $accion = (string) ($evento['accion'] ?? 'Evento');
+                                $accionLegible = ucfirst(
+                                    mb_strtolower(
+                                        str_replace('_', ' ', $accion),
+                                        'UTF-8'
+                                    )
+                                );
+                                $accionNormalizada = mb_strtoupper($accion, 'UTF-8');
+                                $accionTono = 'neutral';
+
+                                if (
+                                    str_contains($accionNormalizada, 'APROBAD')
+                                    || str_contains($accionNormalizada, 'VERIFICAD')
+                                    || str_contains($accionNormalizada, 'ENTREGAD')
+                                ) {
+                                    $accionTono = 'success';
+                                } elseif (str_contains($accionNormalizada, 'RECHAZAD')) {
+                                    $accionTono = 'danger';
+                                }
+
+                                $estadoActual = $detalles['estado_nuevo']
+                                    ?? $detalles['estado']
+                                    ?? null;
+                                $estadoPedido = $detalles['estado_pedido'] ?? null;
+                                $estadoAnterior = $detalles['estado_anterior'] ?? null;
+                                ?>
+
+                                <article class="dashboard-audit-item dashboard-audit-item--<?= esc($accionTono, 'attr') ?>">
+                                    <div class="dashboard-audit-item__header">
+                                        <span class="dashboard-audit-module">
+                                            <?= esc($evento['modulo'] ?? 'Sistema') ?>
+                                        </span>
+
+                                        <?php if (isset($evento['fecha'])): ?>
+                                            <span class="dashboard-audit-date">
+                                                <?= esc(
+                                                    $evento['fecha']
+                                                        ->toDateTime()
+                                                        ->setTimezone(
+                                                            new \DateTimeZone('America/Guatemala')
+                                                        )
+                                                        ->format('d/m/Y H:i:s')
+                                                ) ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <span class="dashboard-audit-action dashboard-audit-action--<?= esc($accionTono, 'attr') ?>">
+                                        <?= esc($accionLegible) ?>
+                                    </span>
+
+                                    <div class="dashboard-audit-details">
+                                        <?php if ($nombreCliente !== null): ?>
+                                            <span>
+                                                <strong>Cliente:</strong>
+                                                <?= esc($nombreCliente) ?>
+                                            </span>
+                                        <?php endif; ?>
+
+                                        <?php if (!empty($mueblesPedido)): ?>
+                                            <span>
+                                                <strong>Muebles:</strong>
+                                                <?= esc(implode(', ', $mueblesPedido)) ?>
+                                            </span>
+                                        <?php endif; ?>
+
+                                        <?php if (isset($detalles['pedido_id'])): ?>
+                                            <span>
+                                                <strong>Pedido:</strong>
+                                                #<?= esc($detalles['pedido_id']) ?>
+                                            </span>
+                                        <?php endif; ?>
+
+                                        <?php if (isset($detalles['solicitud_id'])): ?>
+                                            <span>
+                                                <strong>Solicitud:</strong>
+                                                #<?= esc($detalles['solicitud_id']) ?>
+                                            </span>
+                                        <?php endif; ?>
+
+                                        <?php if ($estadoActual !== null): ?>
+                                            <span>
+                                                <strong>Estado:</strong>
+                                                <?= esc(
+                                                    ucfirst(
+                                                        mb_strtolower(
+                                                            str_replace('_', ' ', (string) $estadoActual),
+                                                            'UTF-8'
+                                                        )
+                                                    )
+                                                ) ?>
+                                            </span>
+                                        <?php endif; ?>
+
+                                        <?php if ($estadoPedido !== null): ?>
+                                            <span>
+                                                <strong>Estado del pedido:</strong>
+                                                <?= esc(
+                                                    ucfirst(
+                                                        mb_strtolower(
+                                                            str_replace('_', ' ', (string) $estadoPedido),
+                                                            'UTF-8'
+                                                        )
+                                                    )
+                                                ) ?>
+                                            </span>
+                                        <?php endif; ?>
+
+                                        <?php if ($estadoAnterior !== null): ?>
+                                            <span>
+                                                <strong>Estado anterior:</strong>
+                                                <?= esc(
+                                                    ucfirst(
+                                                        mb_strtolower(
+                                                            str_replace('_', ' ', (string) $estadoAnterior),
+                                                            'UTF-8'
+                                                        )
+                                                    )
+                                                ) ?>
+                                            </span>
+                                        <?php endif; ?>
+                                    </div>
+                                </article>
+                            <?php endforeach; ?>
+                        </div>
+
+                        <?php if ($auditoriaTotalPaginas > 0): ?>
+                            <nav class="dashboard-audit-pagination"
+                                 aria-label="Paginación de actividad reciente">
+                                <?php if ($auditoriaPagina > 1): ?>
+                                    <a class="btn btn-sm btn-outline-imperial"
+                                       href="<?= esc(site_url('dashboard') . '?auditoria_pagina=' . ($auditoriaPagina - 1), 'attr') ?>">
+                                        Anterior
+                                    </a>
+                                <?php else: ?>
+                                    <span class="btn btn-sm btn-outline-imperial disabled"
+                                          aria-disabled="true">
+                                        Anterior
+                                    </span>
+                                <?php endif; ?>
+
+                                <span class="dashboard-audit-pagination__label">
+                                    Página <?= esc($auditoriaPagina) ?>
+                                    de <?= esc($auditoriaTotalPaginas) ?>
+                                </span>
+
+                                <?php if ($auditoriaPagina < $auditoriaTotalPaginas): ?>
+                                    <a class="btn btn-sm btn-outline-imperial"
+                                       href="<?= esc(site_url('dashboard') . '?auditoria_pagina=' . ($auditoriaPagina + 1), 'attr') ?>">
+                                        Siguiente
+                                    </a>
+                                <?php else: ?>
+                                    <span class="btn btn-sm btn-outline-imperial disabled"
+                                          aria-disabled="true">
+                                        Siguiente
+                                    </span>
+                                <?php endif; ?>
+                            </nav>
+                        <?php endif; ?>
+                    <?php endif; ?>
+                </section>
             </div>
 
         <?php endif; ?>

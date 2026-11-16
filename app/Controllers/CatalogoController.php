@@ -11,6 +11,7 @@ class CatalogoController extends BaseController
         $muebleModel = new MuebleModel();
 
         $buscar = trim((string) $this->request->getGet('buscar'));
+        $categoriaId = (int) $this->request->getGet('categoria');
 
         $consulta = $muebleModel
             ->select('
@@ -37,10 +38,15 @@ class CatalogoController extends BaseController
         if ($buscar !== '') {
             $consulta->like('muebles.nombre', $buscar);
         }
+        if ($categoriaId > 0) {
+            $consulta->where('muebles.categoria_id', $categoriaId);
+        }
 
         $muebles = $consulta
             ->orderBy('muebles.nombre', 'ASC')
-            ->findAll();
+            ->paginate(12);
+
+        $pager = $muebleModel->pager;
 
         // Mantener compatibilidad con la vista actual.
         // La propiedad stock representará unidades disponibles.
@@ -53,6 +59,7 @@ class CatalogoController extends BaseController
         return view('frontend/catalogo', [
             'muebles' => $muebles,
             'buscar'  => $buscar,
+            'pager'   => $pager,
         ]);
     }
 }

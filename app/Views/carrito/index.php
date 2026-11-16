@@ -9,44 +9,47 @@
 
     <link rel="stylesheet"
           href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>">
+    <link rel="stylesheet"
+          href="<?= base_url('assets/css/estilos.css') ?>">
 </head>
 
-<body class="bg-light">
+<body class="imperial-cart-page">
+    <?= view('frontend/partials/header') ?>
 
-    <header class="bg-dark text-white py-4">
-        <div class="container d-flex justify-content-between align-items-center">
+    <main class="container imperial-cart-main">
+
+        <section class="imperial-cart-heading"
+                 aria-labelledby="cart-page-title">
             <div>
-                <h1 class="h3 mb-1">Mueblería Imperial</h1>
-                <p class="mb-0">Mi carrito de compras</p>
+                <p class="imperial-eyebrow">Tu selección</p>
+                <h1 id="cart-page-title">Mi carrito de compras</h1>
+                <p class="imperial-cart-heading__intro">
+                    Revisa las piezas que elegiste para tu hogar.
+                </p>
             </div>
-            
-            <div class="d-flex flex-wrap gap-2">
 
+            <div class="imperial-cart-heading__actions">
                 <?php if (
                     session('logueado') === true &&
                     (int) session('rol_id') === 4
                 ): ?>
                     <a href="<?= site_url('mis-pedidos') ?>"
-                    class="btn btn-warning">
+                       class="btn imperial-cart-secondary">
                         Mis pedidos
                     </a>
                 <?php endif; ?>
 
                 <a href="<?= site_url('catalogo') ?>"
-                class="btn btn-outline-light">
+                   class="btn imperial-cart-continue">
                     Seguir comprando
+                    <span aria-hidden="true">&rarr;</span>
                 </a>
-
             </div>
-
-        </div>
-    </header>
-
-    <main class="container py-5">
+        </section>
 
         <?php if (session()->getFlashdata('success')): ?>
 
-            <div class="alert alert-success alert-dismissible fade show"
+            <div class="imperial-cart-alert imperial-cart-alert--success alert alert-success alert-dismissible fade show"
                 role="alert">
 
                 <?= esc(session()->getFlashdata('success')) ?>
@@ -56,7 +59,7 @@
                 ): ?>
                     <div class="mt-3">
                         <a href="<?= site_url('mis-pedidos') ?>"
-                        class="btn btn-success btn-sm">
+                        class="btn imperial-cart-secondary btn-sm">
                             Ver mis pedidos
                         </a>
                     </div>
@@ -74,7 +77,7 @@
 
         <?php if (session()->getFlashdata('error')): ?>
 
-            <div class="alert alert-danger alert-dismissible fade show"
+            <div class="imperial-cart-alert imperial-cart-alert--error alert alert-danger alert-dismissible fade show"
                 role="alert">
 
                 <?= esc(session()->getFlashdata('error')) ?>
@@ -90,183 +93,184 @@
         <?php endif; ?>
 
 
-        <h2 class="mb-4">Productos seleccionados</h2>
-
         <?php if (empty($productos)): ?>
-
-            <div class="alert alert-info">
-                Tu carrito está vacío.
-            </div>
-
-            <a href="<?= site_url('catalogo') ?>"
-                class="btn btn-primary">
-                    Ver catálogo
-            </a>
+            <section class="imperial-cart-empty"
+                     aria-labelledby="cart-empty-title"
+                     role="status">
+                <div class="imperial-cart-empty__icon" aria-hidden="true">
+                    <svg viewBox="0 0 64 64" fill="none">
+                        <path d="M7 10h7l6.2 29h27.2l6.1-20H17.2"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round"
+                              stroke-linejoin="round" />
+                        <circle cx="25" cy="49" r="3"
+                                stroke="currentColor"
+                                stroke-width="2" />
+                        <circle cx="45" cy="49" r="3"
+                                stroke="currentColor"
+                                stroke-width="2" />
+                        <path d="M29 27h12M35 21v12"
+                              stroke="currentColor"
+                              stroke-width="2"
+                              stroke-linecap="round" />
+                    </svg>
+                </div>
+                <p class="imperial-eyebrow">Un espacio por llenar</p>
+                <h2 id="cart-empty-title">Tu carrito está vacío</h2>
+                <p class="imperial-cart-empty__message">
+                    Descubre nuestros muebles y encuentra la pieza ideal para tu hogar.
+                </p>
+                <a href="<?= site_url('catalogo') ?>"
+                   class="btn imperial-btn-primary">
+                    Explorar catálogo
+                    <span aria-hidden="true">&rarr;</span>
+                </a>
+            </section>
 
         <?php else: ?>
 
-            <div class="table-responsive">
+            <div class="imperial-cart-layout">
+                <section class="imperial-cart-products"
+                         aria-labelledby="cart-products-title">
+                    <div class="imperial-cart-section-heading">
+                        <p class="imperial-eyebrow">Tus piezas</p>
+                        <h2 id="cart-products-title">Productos seleccionados</h2>
+                    </div>
 
-                <table class="table table-bordered table-hover align-middle bg-white">
-
-                    <thead class="table-dark">
-                        <tr>
-                            <th>Producto</th>
-                            <th>Precio</th>
-                            <th>Cantidad</th>
-                            <th>Subtotal</th>
-                            <th>Acciones</th>
-                        </tr>
-                    </thead>
-
-                    <tbody>
-
+                    <div class="imperial-cart-items">
                         <?php foreach ($productos as $producto): ?>
-
-                            <tr>
-                                <td>
-                                    <div class="d-flex align-items-center gap-3">
-
+                            <article class="imperial-cart-item">
+                                <div class="imperial-cart-item__product">
+                                    <div class="imperial-cart-item__image">
                                         <?php if (!empty($producto['imagen_principal'])): ?>
-
                                             <img
                                                 src="<?= esc(base_url($producto['imagen_principal']), 'attr') ?>"
                                                 alt="<?= esc($producto['nombre'], 'attr') ?>"
-                                                width="90"
-                                                height="70"
-                                                style="object-fit: cover;"
+                                                width="112"
+                                                height="96"
                                             >
-
+                                        <?php else: ?>
+                                            <span>Imagen no disponible</span>
                                         <?php endif; ?>
-
-                                        <strong>
-                                            <?= esc($producto['nombre']) ?>
-                                        </strong>
-
                                     </div>
-                                </td>
 
-                                <td>
-                                    Q <?= number_format((float) $producto['precio'], 2) ?>
-                                </td>
+                                    <div class="imperial-cart-item__details">
+                                        <h3><?= esc($producto['nombre']) ?></h3>
+                                        <p>
+                                            Precio unitario
+                                            <strong>
+                                                Q <?= number_format((float) $producto['precio'], 2) ?>
+                                            </strong>
+                                        </p>
+                                    </div>
+                                </div>
 
-                                <!-- CANTIDAD -->
-                                <td>
-                                    <form action="<?= site_url('carrito/actualizar') ?>"
-                                        method="post"
-                                        class="d-flex align-items-center gap-2">
+                                <div class="imperial-cart-item__controls">
+                                    <div class="imperial-cart-quantity">
+                                        <label for="cantidad-<?= esc($producto['id'], 'attr') ?>">
+                                            Cantidad
+                                        </label>
+                                        <form action="<?= site_url('carrito/actualizar') ?>"
+                                              method="post"
+                                              class="imperial-cart-quantity-form">
+                                            <?= csrf_field() ?>
 
-                                        <?= csrf_field() ?>
+                                            <input type="hidden"
+                                                   name="mueble_id"
+                                                   value="<?= esc($producto['id'], 'attr') ?>">
 
-                                        <input type="hidden"
-                                            name="mueble_id"
-                                            value="<?= esc($producto['id'], 'attr') ?>">
+                                            <input type="number"
+                                                   id="cantidad-<?= esc($producto['id'], 'attr') ?>"
+                                                   name="cantidad"
+                                                   class="form-control imperial-cart-quantity-input"
+                                                   min="1"
+                                                   max="<?= (int) $producto['stock'] ?>"
+                                                   value="<?= (int) $producto['cantidad'] ?>"
+                                                   required>
 
-                                        <input type="number"
-                                            name="cantidad"
-                                            class="form-control form-control-sm"
-                                            min="1"
-                                            max="<?= (int) $producto['stock'] ?>"
-                                            value="<?= (int) $producto['cantidad'] ?>"
-                                            style="width: 80px;"
-                                            required>
+                                            <button type="submit"
+                                                    class="btn imperial-cart-update">
+                                                Actualizar
+                                            </button>
+                                        </form>
+                                    </div>
 
-                                        <button type="submit" class="btn btn-primary btn-sm">
-                                            Actualizar
-                                        </button>
-                                    </form>
-                                </td>
+                                    <div class="imperial-cart-item__subtotal">
+                                        <span>Subtotal</span>
+                                        <strong>
+                                            Q <?= number_format((float) $producto['subtotal'], 2) ?>
+                                        </strong>
+                                    </div>
 
-                                <!-- SUBTOTAL -->
-                                <td class="fw-bold">
-                                    Q <?= number_format((float) $producto['subtotal'], 2) ?>
-                                </td>
-
-                                <!-- ACCIONES -->
-                                <td>
                                     <form action="<?= site_url('carrito/eliminar') ?>"
-                                        method="post"
-                                        onsubmit="return confirm('¿Deseas eliminar este producto del carrito?');">
-
+                                          method="post"
+                                          onsubmit="return confirm('¿Deseas eliminar este producto del carrito?');">
                                         <?= csrf_field() ?>
 
                                         <input type="hidden"
-                                            name="mueble_id"
-                                            value="<?= esc($producto['id'], 'attr') ?>">
+                                               name="mueble_id"
+                                               value="<?= esc($producto['id'], 'attr') ?>">
 
-                                        <button type="submit" class="btn btn-danger btn-sm">
+                                        <button type="submit"
+                                                class="btn imperial-cart-remove">
                                             Eliminar
                                         </button>
                                     </form>
-                                </td>
-
-                            </tr>
-
+                                </div>
+                            </article>
                         <?php endforeach; ?>
+                    </div>
+                </section>
 
-                    </tbody>
+                <aside class="imperial-cart-summary"
+                       aria-labelledby="cart-summary-title">
+                    <p class="imperial-eyebrow">Resumen</p>
+                    <h2 id="cart-summary-title">Tu pedido</h2>
 
-                </table>
-
-            </div>
-
-            <div class="card shadow-sm mt-4">
-                <div class="card-body text-end">
-
-                    <h3 class="h4">
-                        Total:
-                        <span class="text-success">
+                    <div class="imperial-cart-summary__total">
+                        <span>Total</span>
+                        <strong>
                             Q <?= number_format((float) $total, 2) ?>
-                        </span>
-                    </h3>
+                        </strong>
+                    </div>
 
-                    
                     <?php if (
                         session('logueado') === true &&
                         (int) session('rol_id') === 4
                     ): ?>
-
                         <form
                             action="<?= site_url('pedidos/confirmar') ?>"
                             method="post"
-                            class="mt-3"
+                            class="imperial-cart-summary__action"
                             onsubmit="return confirm('¿Deseas confirmar este pedido?');"
                         >
                             <?= csrf_field() ?>
 
-                            <button type="submit" class="btn btn-success">
+                            <button type="submit" class="btn imperial-btn-primary w-100">
                                 Confirmar pedido
                             </button>
                         </form>
-
                     <?php else: ?>
-
-                        <div class="mt-3">
-                            <p class="text-muted mb-2">
+                        <div class="imperial-cart-summary__action">
+                            <p>
                                 Inicia sesión como cliente para confirmar tu pedido.
                             </p>
 
                             <a href="<?= site_url('login') ?>"
-                            class="btn btn-primary">
+                               class="btn imperial-btn-primary w-100">
                                 Iniciar sesión
                             </a>
                         </div>
-
                     <?php endif; ?>
-
-
-                </div>
+                </aside>
             </div>
 
         <?php endif; ?>
 
     </main>
 
-    <footer class="bg-dark text-white text-center py-3">
-        <p class="mb-0">
-            &copy; <?= date('Y') ?> Mueblería Imperial
-        </p>
-    </footer>
+    <?= view('frontend/partials/footer') ?>
 
     <script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
 

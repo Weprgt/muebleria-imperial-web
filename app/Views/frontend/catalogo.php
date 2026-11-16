@@ -9,18 +9,14 @@
 
     <link rel="stylesheet"
           href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>">
+    <link rel="stylesheet"
+          href="<?= base_url('assets/css/estilos.css') ?>">
 </head>
 
-<body class="bg-light">
+<body class="imperial-catalog-page">
+    <?= view('frontend/partials/header') ?>
 
-    <header class="bg-dark text-white py-4">
-        <div class="container">
-            <h1 class="h3 mb-1">Mueblería Imperial</h1>
-            <p class="mb-0">Catálogo de muebles</p>
-        </div>
-    </header>
-
-    <main class="container py-5">
+    <main class="container py-5 imperial-catalog-main">
         
         <?php if (session()->getFlashdata('success')): ?>
 
@@ -57,9 +53,9 @@
         <?php endif; ?>
 
 
-        <h2 class="mb-4">Nuestros muebles</h2>
+        <h2 class="imperial-catalog-title">Nuestros muebles</h2>
         
-        <form action="<?= site_url('catalogo') ?>" method="get" class="row g-3 mb-4">
+        <form action="<?= site_url('catalogo') ?>" method="get" class="row g-3 mb-4 imperial-catalog-search">
 
             <div class="col-12 col-md-9">
                 <label for="buscar" class="form-label">
@@ -77,7 +73,8 @@
             </div>
 
             <div class="col-12 col-md-3 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary w-100">
+                <button type="submit"
+                        class="btn imperial-btn-primary imperial-catalog-search-button">
                     Buscar
                 </button>
             </div>
@@ -91,7 +88,7 @@
 
                 <div class="col-12">
                     
-                    <div class="alert alert-info">
+                    <div class="alert imperial-catalog-empty">
 
                         <?php if (!empty($buscar)): ?>
 
@@ -114,25 +111,23 @@
 
                     <div class="col-12 col-md-6 col-lg-4">
 
-                        <div class="card h-100 shadow-sm">
+                        <article class="imperial-product-card h-100">
 
                             <?php if (!empty($mueble['imagen_principal'])): ?>
 
                                 <img
                                     src="<?= esc(base_url($mueble['imagen_principal']), 'attr') ?>"
-                                    class="card-img-top"
+                                    class="imperial-product-card__image"
                                     alt="<?= esc($mueble['nombre'], 'attr') ?>"
-                                    style="height: 220px; object-fit: cover;"
                                 >
 
                             <?php else: ?>
 
-                                <div class="bg-secondary-subtle
-                                            d-flex align-items-center
-                                            justify-content-center"
-                                     style="height: 220px;">
+                                <div class="imperial-product-card__placeholder"
+                                     role="img"
+                                     aria-label="Imagen no disponible para <?= esc($mueble['nombre'], 'attr') ?>">
 
-                                    <span class="text-secondary">
+                                    <span>
                                         Imagen no disponible
                                     </span>
 
@@ -140,21 +135,21 @@
 
                             <?php endif; ?>
 
-                            <div class="card-body d-flex flex-column">
+                            <div class="imperial-product-card__body">
 
-                                <span class="text-muted small mb-2">
+                                <span class="imperial-product-card__category">
                                     <?= esc($mueble['categoria']) ?>
                                 </span>
 
-                                <h3 class="card-title h5">
+                                <h3>
                                     <?= esc($mueble['nombre']) ?>
                                 </h3>
 
-                                <p class="card-text text-secondary">
+                                <p class="imperial-product-card__description">
                                     <?= esc($mueble['descripcion'] ?? '') ?>
                                 </p>
 
-                                <p class="fs-4 fw-bold text-success mt-auto">
+                                <p class="imperial-product-card__price mt-auto">
                                     Q <?= number_format(
                                         (float) $mueble['precio'],
                                         2
@@ -164,7 +159,7 @@
                                 
                                 <?php if ($mueble['stock'] > 0): ?>
 
-                                    <span class="badge text-bg-success mb-3">
+                                    <span class="imperial-product-card__availability">
                                         Disponible
                                     </span>
 
@@ -179,7 +174,8 @@
                                             value="<?= esc($mueble['id'], 'attr') ?>"
                                         >
 
-                                        <button type="submit" class="btn btn-primary w-100">
+                                        <button type="submit"
+                                                class="btn imperial-btn-outline w-100">
                                             Agregar al carrito
                                         </button>
 
@@ -187,11 +183,11 @@
 
                                 <?php else: ?>
 
-                                    <span class="badge text-bg-danger">
+                                    <span class="imperial-product-card__availability is-unavailable">
                                         Agotado
                                     </span>
 
-                                    <button class="btn btn-secondary w-100 mt-3" disabled>
+                                    <button class="btn imperial-btn-disabled w-100 mt-3" disabled>
                                         No disponible
                                     </button>
 
@@ -199,10 +195,9 @@
 
 
                             </div>
+                            </article>
 
                         </div>
-
-                    </div>
 
                 <?php endforeach; ?>
 
@@ -210,13 +205,18 @@
 
         </div>
 
+            <?php if ($pager->getPageCount() > 1): ?>
+            <nav class="mt-5 d-flex justify-content-center"
+                 aria-label="Paginación del catálogo">
+
+                <?= $pager->only(['buscar', 'categoria'])->links() ?>
+
+            </nav>
+        <?php endif; ?>
+
     </main>
 
-    <footer class="bg-dark text-white text-center py-3">
-        <p class="mb-0">
-            &copy; <?= date('Y') ?> Mueblería Imperial
-        </p>
-    </footer>
+    <?= view('frontend/partials/footer') ?>
 
     <script src="<?= base_url('assets/vendor/bootstrap/js/bootstrap.bundle.min.js') ?>"></script>
 

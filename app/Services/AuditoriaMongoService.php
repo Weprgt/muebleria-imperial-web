@@ -62,4 +62,55 @@ class AuditoriaMongoService
             return false;
         }
     }
+    public function obtenerRecientesPaginados(int $pagina = 1, int $porPagina = 5): array
+    {
+        if ($this->coleccion === null) {
+            return [
+                'disponible' => false,
+                'eventos' => [],
+                'total' => 0,
+                'pagina' => 1,
+                'totalPaginas' => 0,
+            ];
+        }
+
+        try {
+            $porPagina = max(1, min($porPagina, 5));
+            $pagina = max(1, $pagina);
+            $total = (int) $this->coleccion->countDocuments([]);
+            $totalPaginas = (int) ceil($total / $porPagina);
+            $paginaActual = min($pagina, max(1, $totalPaginas));
+
+            $cursor = $this->coleccion->find(
+                [],
+                [
+                    'sort'  => ['fecha' => -1, '_id' => -1],
+                    'skip'  => ($paginaActual - 1) * $porPagina,
+                    'limit' => $porPagina,
+                ]
+            );
+
+            return [
+                'disponible' => true,
+                'eventos' => iterator_to_array($cursor, false),
+                'total' => $total,
+                'pagina' => $paginaActual,
+                'totalPaginas' => $totalPaginas,
+            ];
+
+        } catch (Throwable $e) {
+            log_message(
+                'error',
+                'Error al consultar auditoría MongoDB: ' . $e->getMessage()
+            );
+
+            return [
+                'disponible' => false,
+                'eventos' => [],
+                'total' => 0,
+                'pagina' => 1,
+                'totalPaginas' => 0,
+            ];
+        }
+    }
 }
