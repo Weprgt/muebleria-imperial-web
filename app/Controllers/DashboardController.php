@@ -62,6 +62,22 @@ class DashboardController extends BaseController
                 ->countAllResults();
         }
 
+        if ($rolId === 3) {
+            $reparacionModel = new \App\Models\ReparacionModel();
+
+            $datos['tallerPendientes'] = $reparacionModel
+                ->whereIn('estado', ['SOLICITADA', 'EN_EVALUACION'])
+                ->countAllResults();
+
+            $datos['tallerEnReparacion'] = $reparacionModel
+                ->where('estado', 'EN_REPARACION')
+                ->countAllResults();
+
+            $datos['tallerFinalizadas'] = $reparacionModel
+                ->where('estado', 'FINALIZADA')
+                ->countAllResults();
+        }
+
         // Actividad reciente de MongoDB.
         // Exclusiva del administrador.
         if ($rolId === 1) {

@@ -78,10 +78,10 @@ class AuthController extends BaseController
         ]);
 
         $rutasPorRol = [
-            1 => 'admin',
-            2 => 'ventas',
-            3 => 'taller',
-            4 => 'cliente',
+            1 => 'dashboard',
+            2 => 'dashboard',
+            3 => 'dashboard',
+            4 => 'dashboard',
         ];
 
         $rolId = (int) $usuario['rol_id'];

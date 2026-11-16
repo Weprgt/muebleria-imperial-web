@@ -9,32 +9,44 @@
 
     <link rel="stylesheet"
           href="<?= base_url('assets/vendor/bootstrap/css/bootstrap.min.css') ?>">
+    <link rel="stylesheet"
+          href="<?= base_url('assets/css/estilos.css') ?>">
 </head>
 
-<body class="bg-light">
+<body class="imperial-form-page imperial-form-page--admin">
 
-<header class="bg-dark text-white py-4">
-    <div class="container">
-        <h1 class="h3 mb-1">Mueblería Imperial</h1>
-        <p class="mb-0">Administración de muebles</p>
+<header class="imperial-form-page__header py-4">
+    <div class="container imperial-form-page__header-inner">
+        <img
+            class="imperial-form-page__logo"
+            src="<?= base_url('assets/img/logo-imperial.png') ?>"
+            alt=""
+            aria-hidden="true"
+            width="56"
+            height="56"
+        >
+        <div>
+            <h1 class="h3 mb-1">Mueblería Imperial</h1>
+            <p class="mb-0">Administración de muebles</p>
+        </div>
     </div>
 </header>
 
-<main class="container py-5">
+<main class="container py-5 imperial-form-page__main">
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-4 imperial-form-page__title-row">
 
-    <h2 class="mb-0">Inventario de muebles</h2>
+    <h2 class="mb-0 imperial-form-page__title">Inventario de muebles</h2>
 
         <div class="d-flex gap-2 flex-wrap">
 
             <a href="<?= site_url('dashboard') ?>"
-            class="btn btn-outline-secondary">
+            class="btn btn-outline-secondary imperial-form__button imperial-form__button--secondary">
                 &larr; Volver al dashboard
             </a>
 
             <a href="<?= site_url('admin/muebles/agregar') ?>"
-            class="btn btn-success">
+            class="btn btn-success imperial-form__button imperial-form__button--success">
                 + Nuevo mueble
             </a>
 
@@ -45,7 +57,7 @@
         <?php $mensaje = session()->getFlashdata('success'); ?>
 
         <?php if ($mensaje): ?>
-            <div class="alert alert-success alert-dismissible fade show"
+            <div class="alert alert-success alert-dismissible fade show imperial-form__message imperial-form__message--success"
                 role="alert">
 
                 <?= esc($mensaje) ?>
@@ -59,10 +71,10 @@
             </div>
         <?php endif; ?>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-hover align-middle">
+    <div class="table-responsive imperial-form-table-wrap">
+        <table class="table table-striped table-hover align-middle imperial-form-table">
 
-            <thead class="table-dark">
+            <thead class="imperial-form-table__head">
                 <tr>
                     <th>ID</th>
                     <th>Nombre</th>
@@ -103,11 +115,11 @@
 
                             <td>
                                 <?php if ((int) $mueble['activo'] === 1): ?>
-                                    <span class="badge text-bg-success">
+                                    <span class="badge imperial-form-status imperial-form-status--active">
                                         Activo
                                     </span>
                                 <?php else: ?>
-                                    <span class="badge text-bg-secondary">
+                                    <span class="badge imperial-form-status imperial-form-status--inactive">
                                         Inactivo
                                     </span>
                                 <?php endif; ?>
@@ -116,19 +128,19 @@
                             <td>
                                 <!-- Botón para editar el mueble -->
                                 <a href="<?= site_url('admin/muebles/editar/' . $mueble['id']) ?>"
-                                class="btn btn-sm btn-primary me-2">
+                                class="btn btn-sm btn-primary me-2 imperial-form__button imperial-form__button--secondary">
                                     Editar
                                 </a>
 
                                 <!-- Botón para activar o desactivar -->
                                 <form action="<?= site_url('admin/muebles/cambiar-estado/' . $mueble['id']) ?>"
                                     method="post"
-                                    class="d-inline">
+                                    class="d-inline imperial-form imperial-form--inline">
 
                                     <?= csrf_field() ?>
 
                                     <button type="submit"
-                                            class="btn btn-sm <?= (int) $mueble['activo'] === 1 ? 'btn-danger' : 'btn-success' ?>"
+                                            class="btn btn-sm imperial-form__button <?= (int) $mueble['activo'] === 1 ? 'btn-danger imperial-form__button--danger' : 'btn-success imperial-form__button--success' ?>"
                                             onclick="return confirm('¿Confirmas que deseas cambiar el estado de este mueble?')">
 
                                         <?= (int) $mueble['activo'] === 1 ? 'Desactivar' : 'Activar' ?>
@@ -149,7 +161,7 @@
 
 </main>
 
-<footer class="bg-dark text-white text-center py-3">
+<footer class="imperial-form-page__footer text-center py-3">
     <p class="mb-0">
         &copy; <?= date('Y') ?> Mueblería Imperial
     </p>

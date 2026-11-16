@@ -18,7 +18,7 @@ $routes->post('registro', 'RegistroController::guardar');
 
 // Rutas protegidas
 $routes->get('dashboard', 'DashboardController::index', [
-    'filter' => 'auth'
+    'filter' => 'role:1,2,3,4'
 ]);
 
 // Cierre de sesión
@@ -27,19 +27,27 @@ $routes->post('logout', 'AuthController::logout', [
 ]);
 
 // Páginas exclusivas por rol
-$routes->get('admin', 'PanelRolController::administrador', [
+$routes->get('admin', static function () {
+    return redirect()->to(site_url('dashboard'));
+}, [
     'filter' => 'role:1'
 ]);
 
-$routes->get('ventas', 'PanelRolController::ventas', [
+$routes->get('ventas', static function () {
+    return redirect()->to(site_url('dashboard'));
+}, [
     'filter' => 'role:2'
 ]);
 
-$routes->get('taller', 'PanelRolController::taller', [
+$routes->get('taller', static function () {
+    return redirect()->to(site_url('dashboard'));
+}, [
     'filter' => 'role:3'
 ]);
 
-$routes->get('cliente', 'PanelRolController::cliente', [
+$routes->get('cliente', static function () {
+    return redirect()->to(site_url('dashboard'));
+}, [
     'filter' => 'role:4'
 ]);
 
@@ -91,6 +99,25 @@ $routes->post('admin/categorias/desactivar/(:num)',
 $routes->post('admin/categorias/reactivar/(:num)',
     'AdminCategoriasController::reactivar/$1', [
     'filter' => 'role:1']);
+
+// Administración de empleados (Ventas y Taller).
+$routes->get('admin/usuarios', 'AdminUsuariosController::index', [
+    'filter' => 'role:1'
+]);
+
+$routes->get('admin/usuarios/crear', 'AdminUsuariosController::crear', [
+    'filter' => 'role:1'
+]);
+
+$routes->post('admin/usuarios/guardar', 'AdminUsuariosController::guardar', [
+    'filter' => 'role:1'
+]);
+
+$routes->post(
+    'admin/usuarios/(:num)/cambiar-estado',
+    'AdminUsuariosController::cambiarEstado/$1',
+    ['filter' => 'role:1']
+);
 
 $routes->get('carrito', 'CarritoController::index');
 $routes->post('carrito/agregar', 'CarritoController::agregar');
