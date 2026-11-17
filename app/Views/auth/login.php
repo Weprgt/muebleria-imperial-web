@@ -82,6 +82,11 @@
                 <p class="text-secondary mb-4">
                     Ingresa tus credenciales para continuar.
                 </p>
+                <?php if (session()->getFlashdata('success')): ?>
+                    <div class="alert alert-success" role="alert">
+                        <?= esc(session()->getFlashdata('success')) ?>
+                    </div>
+                <?php endif; ?>
 
                 <?php if (session()->getFlashdata('error')): ?>
                     <div class="alert alert-danger" role="alert">
@@ -136,9 +141,9 @@
                     </button>
                 </form>
 
-                <a href="<?= site_url('catalogo') ?>"
-                   class="btn btn-outline-imperial w-100 py-2 mt-3">
-                    Ver catálogo
+                <a href="<?= site_url('registro') ?>"
+                class="btn btn-outline-imperial w-100 py-2 mt-3">
+                    Crear cuenta
                 </a>
 
             </div>
